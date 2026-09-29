@@ -171,7 +171,7 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) =>
       {!disableFlicker && (
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-50 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.38)_50%)] bg-[length:100%_4px] opacity-75"
+          className="pointer-events-none absolute inset-0 z-50 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.38)_50%)] bg-[length:100%_4px] opacity-35"
         />
       )}
 
@@ -184,7 +184,7 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) =>
       {/* ========================================================================= */}
       {/* TOP-DOCK: SYSTEM-TELEMETRIE & RUNTIME SPECS */}
       {/* ========================================================================= */}
-      <header className="relative z-30 h-12 px-4 sm:px-6 flex items-center justify-between border-b border-cyan-900/60 bg-[#070a0e]/90 text-[10px] sm:text-xs text-cyan-400 tracking-wider">
+      <header className="relative z-30 h-12 px-4 sm:px-6 flex items-center justify-between border-b border-cyan-900/60 bg-[#070a0e]/90 text-[10px] sm:text-xs text-cyan-300 font-medium tracking-wider">
         <div className="flex items-center gap-3 sm:gap-6 truncate">
           <span className="flex items-center gap-1.5 font-bold">
             <span
@@ -198,10 +198,10 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) =>
             />
             NODE: AETHEL-WEB-01
           </span>
-          <span className="hidden md:inline text-cyan-500/70">LATENCY: {telemetry.networkLatency}ms</span>
-          <span className="hidden lg:inline text-cyan-500/70">CORE-TEMP: 38°C</span>
-          <span className="hidden sm:inline text-cyan-500/70">MEM: {telemetry.deviceMemory}GB</span>
-          <span className="hidden xl:inline text-cyan-500/70">STORAGE: {telemetry.localStorageAvailable ? 'OK' : 'VOLATILE'}</span>
+          <span className="hidden md:inline text-cyan-200">LATENCY: {telemetry.networkLatency}ms</span>
+          <span className="hidden lg:inline text-cyan-200">CORE-TEMP: 38°C</span>
+          <span className="hidden sm:inline text-cyan-200">MEM: {telemetry.deviceMemory}GB</span>
+          <span className="hidden xl:inline text-cyan-200">STORAGE: {telemetry.localStorageAvailable ? 'OK' : 'VOLATILE'}</span>
         </div>
 
         {/* Accessibility & Audio Controls */}
@@ -236,7 +236,7 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) =>
             <h2 className="text-cyan-400 font-bold tracking-[0.3em] text-sm">
               PHASE 01: SYSTEM POST & HARDWARE PROBE
             </h2>
-            <div className="text-[11px] text-cyan-300/70 font-mono space-y-1 text-left bg-black/40 p-4 border border-cyan-900/50 w-full">
+            <div className="text-[11px] text-cyan-200 font-mono space-y-1 text-left bg-black/50 p-4 border border-cyan-800/80 w-full font-medium">
               <p>&gt; PROBING BROWSER RUNTIME MATRIX...</p>
               <p>&gt; SCREEN RES: {telemetry.screenWidth}x{telemetry.screenHeight} px [OK]</p>
               <p>&gt; HARDWARE THREADS: {telemetry.hardwareConcurrency} CORES [OK]</p>
@@ -250,22 +250,22 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) =>
         {phase === 'AWAITING_USER_GESTURE' && (
           <div className="flex flex-col items-center justify-center space-y-8 max-w-lg px-6 text-center z-20">
             <div className="space-y-3">
-              <div className="text-xs text-cyan-500/80 tracking-[0.4em] uppercase">
+              <div className="text-xs text-cyan-300 tracking-[0.4em] uppercase font-bold">
                 ASTRAEA MODEL-7 // TAKTIK-TERMINAL
               </div>
               <h1 className="text-2xl sm:text-4xl font-extrabold tracking-[0.25em] text-[#00FFAA] drop-shadow-[0_0_20px_rgba(0,255,170,0.5)]">
                 CHRONO-STRATUM
               </h1>
-              <div className="text-sm tracking-[0.3em] text-cyan-300/80 font-semibold">
+              <div className="text-sm tracking-[0.3em] text-cyan-200 font-semibold">
                 PROTOCOL : NULL
               </div>
             </div>
 
-            <div className="p-6 bg-cyan-950/20 border border-cyan-500/60 shadow-[0_0_25px_rgba(0,255,170,0.15)] rounded-xs w-full space-y-4">
+            <div className="p-6 bg-cyan-950/30 border border-cyan-400/80 shadow-[0_0_25px_rgba(0,255,170,0.15)] rounded-xs w-full space-y-4">
               <div className="inline-block px-3 py-1 bg-amber-500/20 border border-amber-500/50 text-amber-300 text-xs tracking-widest font-bold animate-pulse">
                 INTERAKTIONS-SCHRANKE // AUDIO-GATEWAY
               </div>
-              <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-medium">
                 Der Browser erfordert eine physische Benutzer-Geste zur Entriegelung der prozeduralen Web Audio Synthesizer-Engine.
               </p>
               <button
@@ -274,7 +274,7 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) =>
               >
                 [ &gt; ] SYSTEM BEREIT // KLICKEN ZUR INITIALISIERUNG
               </button>
-              <div className="text-[10px] text-cyan-500/60 tracking-wider">
+              <div className="text-[10px] text-cyan-300 tracking-wider font-semibold">
                 ODER EINE BELIEBIGE TASTE DRÜCKEN
               </div>
             </div>
@@ -293,7 +293,7 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) =>
                 INTERACTIVE SYSTEMS
               </div>
             </div>
-            <div className="text-xs font-mono text-cyan-400/90 tracking-widest flex items-center gap-2">
+            <div className="text-xs font-mono text-cyan-300 tracking-widest flex items-center gap-2 font-semibold">
               <span className="w-2 h-2 bg-cyan-400 animate-ping inline-block" />
               PHOSPHOR-BLÜHEN // SYNTHESIZER 48.000 Hz INITIALISIERT...
             </div>
@@ -313,17 +313,17 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) =>
 
             {/* Overlaid Attract HUD Controls */}
             <div className="relative z-20 flex flex-col items-center text-center space-y-6 px-4 max-w-xl pointer-events-auto">
-              <div className="space-y-2 bg-[#070a0e]/60 p-4 border border-cyan-900/40 backdrop-blur-xs">
-                <div className="text-xs sm:text-sm text-cyan-400/80 tracking-[0.35em] font-bold">
+              <div className="space-y-2 bg-[#070a0e]/80 p-4 border border-cyan-700/60 backdrop-blur-xs">
+                <div className="text-xs sm:text-sm text-cyan-300 tracking-[0.35em] font-bold">
                   ORBITAL-STATION STRATUM-09
                 </div>
                 <h1 className="text-3xl sm:text-5xl font-black tracking-[0.2em] text-[#00FFAA] drop-shadow-[0_0_25px_rgba(0,255,170,0.6)]">
                   CHRONO-STRATUM
                 </h1>
-                <div className="text-xs sm:text-sm tracking-[0.3em] text-cyan-300 font-semibold">
+                <div className="text-xs sm:text-sm tracking-[0.3em] text-cyan-200 font-semibold">
                   PROTOCOL : NULL
                 </div>
-                <div className="text-[11px] text-gray-400 tracking-widest pt-1 border-t border-cyan-900/60 mt-2">
+                <div className="text-[11px] text-slate-200 tracking-widest pt-1 border-t border-cyan-800/80 mt-2 font-medium">
                   TERMINAL STATUS: ONLINE // OPERATIVE BEREIT
                 </div>
               </div>
@@ -331,16 +331,16 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) =>
               {/* Call-to-Action (CTA) Button */}
               <button
                 onClick={handleInitializeTerminal}
-                className="group relative px-8 py-4 bg-cyan-950/60 border border-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-150 ease-out shadow-[0_0_20px_rgba(0,255,170,0.3)] hover:shadow-[0_0_35px_rgba(0,255,170,0.7)] cursor-pointer text-sm sm:text-base tracking-[0.25em] font-bold text-center"
+                className="group relative px-8 py-4 bg-cyan-950/70 border border-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-150 ease-out shadow-[0_0_20px_rgba(0,255,170,0.3)] hover:shadow-[0_0_35px_rgba(0,255,170,0.7)] cursor-pointer text-sm sm:text-base tracking-[0.25em] font-bold text-center"
               >
                 <span className="flex items-center gap-2">
                   <span>[ &gt; ]</span>
                   <span>SYSTEM INITIALISIEREN</span>
-                  <span className="text-xs font-normal opacity-80">(ENTER)</span>
+                  <span className="text-xs font-semibold opacity-90 text-cyan-200 group-hover:text-black">(ENTER)</span>
                 </span>
               </button>
 
-              <div className="text-[10px] text-cyan-500/70 tracking-widest bg-[#070a0e]/80 px-3 py-1 border border-cyan-900/40">
+              <div className="text-[10px] text-cyan-200 tracking-widest bg-[#070a0e]/90 px-3 py-1 border border-cyan-800 font-medium">
                 DRÜCKE [ENTER] ODER KLICKE ZUM STARTEN DES TAKTIK-DECKS
               </div>
             </div>
@@ -351,25 +351,25 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) =>
       {/* ========================================================================= */}
       {/* BOTTOM-DOCK: HARDWARE-STATUS & PROFIL-VALIDIERUNG */}
       {/* ========================================================================= */}
-      <footer className="relative z-30 h-14 px-4 sm:px-6 flex items-center justify-between border-t border-cyan-900/60 bg-[#070a0e]/90 text-[10px] sm:text-xs text-cyan-400 tracking-wider">
+      <footer className="relative z-30 h-14 px-4 sm:px-6 flex items-center justify-between border-t border-cyan-900/60 bg-[#070a0e]/90 text-[10px] sm:text-xs text-cyan-300 tracking-wider font-medium">
         <div className="flex items-center gap-2 sm:gap-4 truncate">
-          <span className="font-bold text-gray-200">PROFIL: OPERATIVE_LOCAL</span>
-          <span className="px-1.5 py-0.5 bg-cyan-950 text-cyan-300 border border-cyan-700/60 text-[9px]">
+          <span className="font-bold text-gray-100">PROFIL: OPERATIVE_LOCAL</span>
+          <span className="px-1.5 py-0.5 bg-cyan-950 text-cyan-200 border border-cyan-700/60 text-[9px] font-bold">
             VERIFIZIERT
           </span>
-          <span className="hidden md:inline text-cyan-500/70">
+          <span className="hidden md:inline text-cyan-200">
             AUDIO: {telemetry.audioUnlocked ? (isAudioMuted ? 'STUMM' : '48kHz AKTIV') : 'STANDBY'}
           </span>
           {audioBlockedWarning && (
-            <span className="text-amber-400 font-bold animate-pulse">
+            <span className="text-amber-300 font-bold animate-pulse">
               WARNUNG: AUDIO-ENGINE BLOCKIERT // KLICKEN ZUR FREIGABE
             </span>
           )}
         </div>
 
-        <div className="flex items-center gap-2 text-cyan-500/80">
+        <div className="flex items-center gap-2 text-cyan-200">
           <span className="hidden sm:inline">INPUT: TASTATUR / TOUCH DETEKTIERT</span>
-          <span className="text-cyan-400 font-bold">AICR v9.4</span>
+          <span className="text-cyan-300 font-bold">AICR v9.4</span>
         </div>
       </footer>
     </div>

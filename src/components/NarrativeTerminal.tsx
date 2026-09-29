@@ -310,7 +310,7 @@ export const NarrativeTerminal: React.FC<NarrativeTerminalProps> = ({
             <span className="font-bold text-white tracking-widest text-[11px] sm:text-xs">
               ASTRAEA NEURAL COMMS TERMINAL v10.1 // KAUSALITÄT
             </span>
-            <span className="text-[10px] text-gray-500 hidden sm:inline">
+            <span className="text-[10px] text-cyan-300 font-medium hidden sm:inline">
               LOKATION: {sectorName} // {atmosphereNote}
             </span>
           </div>
@@ -331,7 +331,7 @@ export const NarrativeTerminal: React.FC<NarrativeTerminalProps> = ({
                 className={`px-2.5 py-1 border text-[10px] font-bold transition-all cursor-pointer ${
                   isCurrent
                     ? 'border-white text-black'
-                    : 'border-cyan-950 text-gray-400 hover:border-cyan-800'
+                    : 'border-cyan-900 text-slate-300 hover:border-cyan-600 font-medium'
                 }`}
                 style={{
                   backgroundColor: isCurrent ? facTheme : 'transparent',
@@ -344,14 +344,14 @@ export const NarrativeTerminal: React.FC<NarrativeTerminalProps> = ({
 
           <button
             onClick={() => setIsCodexOpen(true)}
-            className="hidden sm:inline px-3 py-1 bg-cyan-950 border border-cyan-800 text-cyan-300 hover:bg-cyan-500 hover:text-black text-xs font-bold transition-colors cursor-pointer"
+            className="hidden sm:inline px-3 py-1 bg-cyan-950 border border-cyan-800 text-cyan-200 hover:bg-cyan-500 hover:text-black text-xs font-bold transition-colors cursor-pointer"
           >
             [K] KODEX-ARCHIV
           </button>
 
           <button
             onClick={handleClose}
-            className="px-2.5 py-1 border border-cyan-900 hover:border-red-500 text-gray-400 hover:text-red-400 text-xs transition-colors cursor-pointer"
+            className="px-2.5 py-1 border border-cyan-900 hover:border-red-500 text-slate-300 hover:text-red-300 text-xs transition-colors cursor-pointer font-medium"
           >
             BEENDEN [ESC]
           </button>
@@ -369,7 +369,7 @@ export const NarrativeTerminal: React.FC<NarrativeTerminalProps> = ({
           <div className="space-y-3">
             <div className="flex justify-between items-center text-xs pb-2 border-b border-cyan-950">
               <span className="font-bold text-white tracking-wider">NEURAL-PORTRAIT</span>
-              <span className="text-[10px]" style={{ color: speaker.themeColor }}>
+              <span className="text-[10px] font-bold" style={{ color: speaker.themeColor }}>
                 {speaker.faction}
               </span>
             </div>
@@ -388,14 +388,14 @@ export const NarrativeTerminal: React.FC<NarrativeTerminalProps> = ({
             {/* Speaker Dossier */}
             <div className="p-3 bg-black/60 border border-cyan-950 space-y-1 text-xs">
               <div className="font-bold text-white text-[12px]">{speaker.name}</div>
-              <div className="text-[10px] text-cyan-500">{speaker.title}</div>
-              <p className="text-[10px] text-gray-400 leading-relaxed pt-1">{speaker.bio}</p>
+              <div className="text-[10px] text-cyan-300 font-bold">{speaker.title}</div>
+              <p className="text-[10px] text-slate-300 font-medium leading-relaxed pt-1">{speaker.bio}</p>
             </div>
           </div>
 
           {/* Faction Reputation Indicators */}
           <div className="p-3 bg-black/70 border border-cyan-950 space-y-2 text-xs">
-            <div className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">
+            <div className="text-[10px] text-cyan-300 font-bold uppercase tracking-wider">
               FRAKTIONS-GUNST // KAUSAL-MATRIX
             </div>
 
@@ -451,41 +451,41 @@ export const NarrativeTerminal: React.FC<NarrativeTerminalProps> = ({
           <div className="flex-1 overflow-y-auto space-y-4 pr-2 scrollbar-thin">
             {/* Archive / Previous Exchanges */}
             {dialogueLogs.map((log) => (
-              <div key={log.id} className="p-3 bg-black/40 border border-cyan-950/80 space-y-1 text-xs">
-                <div className="flex justify-between text-[10px] text-gray-500">
-                  <span className="font-bold text-gray-400">[{log.speaker}]</span>
+              <div key={log.id} className="p-3 bg-black/50 border border-cyan-900/80 space-y-1 text-xs">
+                <div className="flex justify-between text-[10px] text-cyan-300 font-medium">
+                  <span className="font-bold text-cyan-200">[{log.speaker}]</span>
                   <span>{log.timestamp}</span>
                 </div>
-                <p className="text-gray-300 italic">{log.text}</p>
+                <p className="text-slate-200 italic font-medium">{log.text}</p>
                 {log.chosenOption && (
-                  <div className="pt-1 text-[11px] text-[#00FFAA] border-t border-cyan-950 mt-1 flex justify-between">
+                  <div className="pt-1 text-[11px] text-[#00FFAA] border-t border-cyan-950 mt-1 flex justify-between font-medium">
                     <span>&gt; VANCE: "{log.chosenOption}"</span>
-                    <span className="text-[10px] text-gray-500">({log.reputationImpact})</span>
+                    <span className="text-[10px] text-slate-300">({log.reputationImpact})</span>
                   </div>
                 )}
               </div>
             ))}
 
             {/* Active Teletype Stream */}
-            <div className="p-4 sm:p-6 bg-black/70 border border-cyan-900/80 relative space-y-3 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
-              <div className="flex justify-between text-xs text-gray-500 pb-2 border-b border-cyan-950">
+            <div className="p-4 sm:p-6 bg-black/80 border border-cyan-700/80 relative space-y-3 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+              <div className="flex justify-between text-xs text-cyan-300 font-medium pb-2 border-b border-cyan-900">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full" style={{ backgroundColor: speaker.themeColor }} />
                   <strong className="text-white">[{speaker.name}]</strong>
                 </div>
-                <span className="text-[10px] text-cyan-600">LIVE-VOX STREAM</span>
+                <span className="text-[10px] text-cyan-300 font-bold">LIVE-VOX STREAM</span>
               </div>
 
               {/* Typewriter Text */}
-              <div className="text-sm sm:text-base text-gray-100 font-mono leading-relaxed min-h-[64px]">
+              <div className="text-sm sm:text-base text-gray-100 font-mono font-medium leading-relaxed min-h-[64px]">
                 "{displayedText}"
                 {isTyping && <span className="inline-block w-2.5 h-4 ml-1 bg-[#00FFAA] animate-pulse" />}
               </div>
 
               {isTyping && (
-                <div className="text-[10px] text-gray-500 pt-2 flex justify-between">
+                <div className="text-[10px] text-slate-300 font-medium pt-2 flex justify-between">
                   <span>EMPFANGE QUANTEN-SIGNAL...</span>
-                  <span className="text-cyan-400">[LEERTASTE] TEXT BESCHLEUNIGEN</span>
+                  <span className="text-cyan-300 font-bold">[LEERTASTE] TEXT BESCHLEUNIGEN</span>
                 </div>
               )}
             </div>
@@ -498,10 +498,10 @@ export const NarrativeTerminal: React.FC<NarrativeTerminalProps> = ({
             {/* Chrono-Dilemma Timer Bar */}
             <div className="space-y-1">
               <div className="flex justify-between text-xs font-bold">
-                <span className="text-cyan-400">CHRONO-DILEMMA: ZEITFENSTER</span>
+                <span className="text-cyan-300">CHRONO-DILEMMA: ZEITFENSTER</span>
                 <span
                   className={`${
-                    dilemmaTimer <= 2.0 ? 'text-red-500 animate-ping' : 'text-[#00FFAA]'
+                    dilemmaTimer <= 2.0 ? 'text-red-400 animate-ping' : 'text-[#00FFAA]'
                   }`}
                 >
                   [ {dilemmaTimer.toFixed(1)}s ]
@@ -524,13 +524,13 @@ export const NarrativeTerminal: React.FC<NarrativeTerminalProps> = ({
                   key={choice.id}
                   onClick={() => handleSelectChoice(choice.id)}
                   disabled={isTyping}
-                  className="p-3 text-left border border-cyan-900/80 bg-black/50 hover:bg-cyan-950 hover:border-[#00FFAA] hover:text-white transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed group"
+                  className="p-3 text-left border border-cyan-900/80 bg-black/60 hover:bg-cyan-950 hover:border-[#00FFAA] hover:text-white transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed group font-medium"
                 >
-                  <div className="flex justify-between text-[10px] text-cyan-600 group-hover:text-[#00FFAA] mb-1">
+                  <div className="flex justify-between text-[10px] text-cyan-300 group-hover:text-[#00FFAA] mb-1">
                     <span className="font-bold">[{choice.id}] {choice.factionAlignment}</span>
                     <span>{choice.consequenceHint}</span>
                   </div>
-                  <div className="text-gray-200 text-xs sm:text-[13px] leading-snug">
+                  <div className="text-gray-100 text-xs sm:text-[13px] leading-snug">
                     "{choice.text}"
                   </div>
                 </button>
@@ -540,13 +540,13 @@ export const NarrativeTerminal: React.FC<NarrativeTerminalProps> = ({
               <button
                 onClick={() => handleSelectChoice(4, true)}
                 disabled={isTyping}
-                className="p-3 text-left border border-dashed border-gray-800 bg-black/30 hover:border-red-500 hover:text-white transition-all cursor-pointer disabled:opacity-40 group sm:col-span-2 md:col-span-1"
+                className="p-3 text-left border border-dashed border-cyan-800 bg-black/40 hover:border-red-400 hover:text-white transition-all cursor-pointer disabled:opacity-40 group sm:col-span-2 md:col-span-1 font-medium"
               >
-                <div className="flex justify-between text-[10px] text-gray-500 group-hover:text-red-400 mb-1">
+                <div className="flex justify-between text-[10px] text-slate-300 group-hover:text-red-400 mb-1">
                   <span className="font-bold">[4] SCHWEIGEN</span>
                   <span>Verstreichen lassen</span>
                 </div>
-                <div className="text-gray-400 italic text-xs">
+                <div className="text-slate-300 italic text-xs">
                   [Nichts sagen. Den Timer ablaufen lassen.]
                 </div>
               </button>

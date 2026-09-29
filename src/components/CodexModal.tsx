@@ -163,8 +163,8 @@ export const CodexModal: React.FC<CodexModalProps> = ({ isOpen, onClose }) => {
                   }}
                   className={`px-2 py-1 border transition-colors ${
                     activeCategory === cat
-                      ? 'border-[#00FFAA] bg-cyan-950 text-[#00FFAA]'
-                      : 'border-cyan-950 text-gray-500 hover:text-gray-300'
+                      ? 'border-[#00FFAA] bg-cyan-950 text-[#00FFAA] font-bold'
+                      : 'border-cyan-900 text-slate-300 hover:border-cyan-600 font-medium'
                   }`}
                 >
                   {cat}
@@ -185,11 +185,11 @@ export const CodexModal: React.FC<CodexModalProps> = ({ isOpen, onClose }) => {
                     }}
                     className={`w-full text-left p-2.5 border transition-all text-xs cursor-pointer ${
                       isSelected
-                        ? 'border-[#00FFAA] bg-cyan-950/80 text-white shadow-[0_0_10px_rgba(0,255,170,0.2)]'
-                        : 'border-cyan-950 bg-black/40 text-gray-400 hover:border-cyan-800 hover:text-gray-200'
+                        ? 'border-[#00FFAA] bg-cyan-950/80 text-white shadow-[0_0_10px_rgba(0,255,170,0.2)] font-bold'
+                        : 'border-cyan-900/60 bg-black/40 text-slate-300 hover:border-cyan-600 hover:text-white font-medium'
                     }`}
                   >
-                    <div className="flex justify-between text-[10px] text-cyan-600 mb-0.5">
+                    <div className="flex justify-between text-[10px] text-cyan-300 font-medium mb-0.5">
                       <span>{entry.code}</span>
                       <span>{entry.unlocked ? 'KLARSTUFE ' + entry.clearanceLevel : '[GESPERRT]'}</span>
                     </div>
@@ -207,36 +207,36 @@ export const CodexModal: React.FC<CodexModalProps> = ({ isOpen, onClose }) => {
             {selectedEntry.unlocked ? (
               <div className="space-y-4">
                 <div className="border-b border-cyan-900 pb-3">
-                  <div className="flex justify-between text-xs text-cyan-500 mb-1">
+                  <div className="flex justify-between text-xs text-cyan-300 font-bold mb-1">
                     <span>REGISTRIER-CODE: {selectedEntry.code}</span>
                     <span>DATUM: {selectedEntry.date}</span>
                   </div>
                   <h1 className="text-lg font-bold text-white tracking-wide">
                     {selectedEntry.title}
                   </h1>
-                  <div className="text-xs text-gray-400 mt-1">
+                  <div className="text-xs text-slate-300 font-medium mt-1">
                     AUTOR: <strong className="text-cyan-300">{selectedEntry.author}</strong> //
                     SICHERHEITS-FREIGABE: STUFE {selectedEntry.clearanceLevel}
                   </div>
                 </div>
 
-                <div className="p-4 bg-black/70 border border-cyan-950 text-gray-200 text-xs sm:text-sm leading-relaxed whitespace-pre-line font-mono">
+                <div className="p-4 bg-black/70 border border-cyan-950 text-gray-100 text-xs sm:text-sm leading-relaxed whitespace-pre-line font-mono font-medium">
                   {selectedEntry.content}
                 </div>
               </div>
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center text-center space-y-3 p-8 border border-dashed border-red-900/60 bg-red-950/10">
-                <div className="text-red-500 font-bold text-sm tracking-widest">
+                <div className="text-red-400 font-bold text-sm tracking-widest">
                   [DATENKERN VERSCHLÜSSELT]
                 </div>
-                <p className="text-xs text-gray-400 max-w-md">
+                <p className="text-xs text-slate-300 font-medium max-w-md">
                   Dieses Protokoll erfordert höhere Kausalitäts-Freigabe oder das Bergen von
                   Daten-Relikten in den tieferen Sektoren von Stratum-09.
                 </p>
               </div>
             )}
 
-            <div className="pt-4 border-t border-cyan-950 flex justify-between text-[11px] text-gray-500">
+            <div className="pt-4 border-t border-cyan-950 flex justify-between text-[11px] text-cyan-300 font-medium">
               <span>ASTRAEA NEURAL-LINK ARCHIV // 2185 PROTOCOL NULL</span>
               <span>TASTATUR: [ESC] ZURÜCK ZUM TERMINAL</span>
             </div>

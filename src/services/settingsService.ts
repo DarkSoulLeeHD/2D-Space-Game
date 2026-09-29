@@ -36,7 +36,7 @@ export const DEFAULT_SETTINGS: ITerminalSettings = {
     isMuted: false,
   },
   display: {
-    crtScanlineOpacity: 0.6,
+    crtScanlineOpacity: 0.38,
     bloomIntensity: 0.8,
     isCurvatureEnabled: false,
     colorTheme: 'CYAN',
@@ -82,11 +82,18 @@ export class SettingsService {
 
       const parsed = JSON.parse(raw);
       const activeCachedKey = CloudPersistenceService.getCachedApiKey();
+      const loadedScanline = parsed.display?.crtScanlineOpacity;
+      const tunedScanline = typeof loadedScanline === 'number' && loadedScanline > 0.45 ? 0.38 : (loadedScanline ?? 0.38);
+
       return {
         ...DEFAULT_SETTINGS,
         ...parsed,
         audio: { ...DEFAULT_SETTINGS.audio, ...parsed.audio },
-        display: { ...DEFAULT_SETTINGS.display, ...parsed.display },
+        display: {
+          ...DEFAULT_SETTINGS.display,
+          ...parsed.display,
+          crtScanlineOpacity: tunedScanline,
+        },
         keybindings: { ...DEFAULT_KEYBINDINGS, ...parsed.keybindings },
         aiCore: {
           ...DEFAULT_SETTINGS.aiCore,

@@ -107,7 +107,7 @@ export const ChronoParryOverlay: React.FC<ChronoParryOverlayProps> = ({
         {resultState === 'PERFECT' && (
           <div className="text-2xl font-black text-[#00FFAA] tracking-widest drop-shadow-[0_0_20px_#00FFAA] animate-bounce">
             &gt;&gt; PERFEKTE CHRONO-PARADE! &lt;&lt;
-            <div className="text-xs text-cyan-300 font-normal mt-1 tracking-wider">
+            <div className="text-xs text-cyan-200 font-medium mt-1 tracking-wider">
               0 DMG ERLITTEN // GEGNER BETÄUBT // +1 AP NÄCHSTE RUNDE
             </div>
           </div>

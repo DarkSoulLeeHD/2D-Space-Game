@@ -270,33 +270,33 @@ export const OperationsHub: React.FC<OperationsHubProps> = ({
       {/* CRT Scanline Overlay */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-40 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.35)_50%)] bg-[length:100%_4px] opacity-75"
+        className="pointer-events-none absolute inset-0 z-40 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.35)_50%)] bg-[length:100%_4px] opacity-35"
       />
 
       {/* ========================================================================= */}
       {/* SEKTOR-HEADER: STATUS & WELT-ENTROPIE */}
       {/* ========================================================================= */}
-      <header className="relative z-30 h-14 px-4 sm:px-6 flex items-center justify-between border-b border-cyan-900/60 bg-[#070b10] text-xs text-cyan-400 shrink-0">
+      <header className="relative z-30 h-14 px-4 sm:px-6 flex items-center justify-between border-b border-cyan-900/60 bg-[#070b10] text-xs text-cyan-300 font-medium shrink-0">
         <div className="flex items-center gap-3 sm:gap-6 truncate">
           <div className="flex items-center gap-2 font-bold tracking-widest text-[#00FFAA]">
             <span className="w-2.5 h-2.5 rounded-full bg-[#00FFAA] animate-pulse" />
             ASTRAEA ORBITAL RECON // SEKTOR-ANALYSE TERMINAL v5.1
           </div>
-          <span className="hidden md:inline text-cyan-600">// SICHERHEITS-STUFE: OPERATIVE</span>
+          <span className="hidden md:inline text-cyan-400 font-semibold">// SICHERHEITS-STUFE: OPERATIVE</span>
         </div>
 
         <div className="flex items-center gap-2 sm:gap-5 text-[11px] sm:text-xs">
           <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 bg-cyan-950/40 border border-cyan-800/60">
-            <span className="text-cyan-500/70">LOKATION:</span>{' '}
+            <span className="text-cyan-300 font-semibold">LOKATION:</span>{' '}
             <strong className="text-gray-100 font-bold">{sectorName}</strong>
           </div>
           <div className="flex items-center gap-1.5 px-2.5 py-1 bg-cyan-950/40 border border-cyan-800/60">
-            <span className="text-cyan-500/70">ENTROPIE-DRIFT:</span>{' '}
+            <span className="text-cyan-300 font-semibold">ENTROPIE-DRIFT:</span>{' '}
             <strong className="text-amber-400 font-bold">68.4%</strong>
           </div>
           <div className="flex items-center gap-1.5 px-2.5 py-1 bg-cyan-950/40 border border-cyan-800/60">
-            <span className="text-cyan-500/70">ANOMALIE-FENSTER:</span>{' '}
-            <strong className="text-cyan-300 font-bold">{formatTimer(countdownTimer)} MIN</strong>
+            <span className="text-cyan-300 font-semibold">ANOMALIE-FENSTER:</span>{' '}
+            <strong className="text-cyan-200 font-bold">{formatTimer(countdownTimer)} MIN</strong>
           </div>
           <button
             onClick={onBackToDeck}
@@ -404,32 +404,32 @@ export const OperationsHub: React.FC<OperationsHubProps> = ({
                 </div>
                 {dossier?.enemyThreats && dossier.enemyThreats.length > 0 ? (
                   dossier.enemyThreats.map((threat, idx) => (
-                    <div key={idx} className="text-gray-300 text-[11px] flex items-start gap-1.5">
-                      <span className="text-red-500 font-bold">&bull;</span>
+                    <div key={idx} className="text-gray-200 text-[11px] flex items-start gap-1.5 font-medium">
+                      <span className="text-red-400 font-bold">&bull;</span>
                       <span>{threat}</span>
                     </div>
                   ))
                 ) : (
-                  <div className="text-gray-500 text-[11px]">Scanne Sensor-Signaturen...</div>
+                  <div className="text-cyan-300 text-[11px] font-medium">Scanne Sensor-Signaturen...</div>
                 )}
               </div>
 
               {/* Umgebungs-Gefahren */}
               <div className="p-3 bg-black/50 border border-cyan-900/60 space-y-1.5">
-                <div className="text-[10px] text-amber-400 font-bold tracking-wider">
+                <div className="text-[10px] text-amber-300 font-bold tracking-wider">
                   UMGEBUNGS-AFFIXE (MODIFIKATOREN):
                 </div>
                 {activeAffixes.length > 0 ? (
                   activeAffixes.map((affix) => (
-                    <div key={affix.id} className="text-gray-300 text-[11px]">
-                      <span className={affix.type === 'BUFF' ? 'text-[#00FFAA] font-bold' : 'text-amber-400 font-bold'}>
+                    <div key={affix.id} className="text-gray-200 text-[11px] font-medium">
+                      <span className={affix.type === 'BUFF' ? 'text-[#00FFAA] font-bold' : 'text-amber-300 font-bold'}>
                         [{affix.type === 'BUFF' ? '+' : '!'}] {affix.name}:
                       </span>{' '}
-                      <span className="opacity-90">{affix.desc}</span>
+                      <span className="text-slate-200">{affix.desc}</span>
                     </div>
                   ))
                 ) : (
-                  <div className="text-gray-400 text-[11px]">
+                  <div className="text-slate-300 text-[11px] font-medium">
                     Keine Umwelt-Affixe auf Stufe Kadett aktiv.
                   </div>
                 )}
@@ -437,7 +437,7 @@ export const OperationsHub: React.FC<OperationsHubProps> = ({
 
               {/* Taktischer Ratschlag */}
               {dossier?.tacticalAdvice && (
-                <div className="p-2.5 bg-cyan-950/20 border border-cyan-800/40 text-[11px] text-cyan-300/90 italic">
+                <div className="p-2.5 bg-cyan-950/30 border border-cyan-700/60 text-[11px] text-cyan-200 italic font-medium">
                   &gt; Astraea Rat: &quot;{dossier.tacticalAdvice}&quot;
                 </div>
               )}
@@ -445,9 +445,9 @@ export const OperationsHub: React.FC<OperationsHubProps> = ({
 
             {/* Difficulty Modifier Selector */}
             <div className="space-y-2 pt-2 border-t border-cyan-950">
-              <div className="flex items-center justify-between text-[10px] text-gray-400 font-bold">
+              <div className="flex items-center justify-between text-[10px] text-cyan-300 font-bold">
                 <span>SCHWIERIGKEITS-MODIFIKATOR [1-3]:</span>
-                <span className="text-cyan-400 font-mono">
+                <span className="text-cyan-200 font-mono font-bold">
                   RISK: x{THREAT_CONFIGS[threatLevel].lootMult} BEUTE
                 </span>
               </div>
@@ -465,12 +465,12 @@ export const OperationsHub: React.FC<OperationsHubProps> = ({
                       }}
                       className={`p-2 border text-center text-xs font-mono font-bold cursor-pointer transition-colors ${
                         isSelected
-                          ? 'border-cyan-400 bg-cyan-950/70 text-cyan-300 shadow-[0_0_12px_rgba(0,255,170,0.3)]'
-                          : 'border-cyan-900/50 bg-black/40 text-gray-400 hover:border-cyan-700'
+                          ? 'border-cyan-400 bg-cyan-950/70 text-cyan-200 shadow-[0_0_12px_rgba(0,255,170,0.3)]'
+                          : 'border-cyan-800 bg-black/50 text-slate-200 hover:border-cyan-500'
                       }`}
                     >
                       <div>[{lvl}] {cfg.label}</div>
-                      <div className="text-[9px] opacity-75 font-normal mt-0.5">
+                      <div className="text-[9px] text-cyan-200 font-medium mt-0.5">
                         +{Math.round((cfg.lootMult - 1) * 100)}% Loot
                       </div>
                     </button>
@@ -481,10 +481,10 @@ export const OperationsHub: React.FC<OperationsHubProps> = ({
 
             {/* Loot Yield Estimate */}
             <div className="p-3 bg-cyan-950/30 border border-cyan-800/50 text-xs flex items-center justify-between">
-              <span className="text-gray-300 font-bold">PROGNOSTIZIERTER BEUTE-ERTRAG:</span>
+              <span className="text-gray-200 font-bold">PROGNOSTIZIERTER BEUTE-ERTRAG:</span>
               <div className="flex gap-3 text-[11px] font-bold">
                 <span className="text-[#00FFAA]">~{lootEstimate.nanites} TN</span>
-                <span className="text-amber-400">~{lootEstimate.crystals} CK</span>
+                <span className="text-amber-300">~{lootEstimate.crystals} CK</span>
               </div>
             </div>
           </div>
@@ -498,7 +498,7 @@ export const OperationsHub: React.FC<OperationsHubProps> = ({
             >
               [ &gt; ] DROP-POD STARTEN (ENTER)
             </button>
-            <div className="text-[10px] text-center text-cyan-500/70 mt-2">
+            <div className="text-[10px] text-center text-cyan-200 font-medium mt-2">
               DRÜCKE [ENTER] ODER KLICKE ZUM BEGINN DER INFILTRATION
             </div>
           </div>
@@ -508,8 +508,8 @@ export const OperationsHub: React.FC<OperationsHubProps> = ({
       {/* ========================================================================= */}
       {/* SEKTOR-FOOTER: LAUNCH-GATE BEFEHLSLEISTE */}
       {/* ========================================================================= */}
-      <footer className="relative z-30 h-12 px-4 sm:px-6 flex items-center justify-between border-t border-cyan-900/60 bg-[#070b10] text-[10px] sm:text-xs text-cyan-400 shrink-0">
-        <div className="flex items-center gap-4 text-gray-400">
+      <footer className="relative z-30 h-12 px-4 sm:px-6 flex items-center justify-between border-t border-cyan-900/60 bg-[#070b10] text-[10px] sm:text-xs text-cyan-300 font-medium shrink-0">
+        <div className="flex items-center gap-4 text-slate-200">
           <span>[LEERTASTE] RADAR-SCAN</span>
           <span className="hidden sm:inline">[1-3] BEDROHUNG</span>
           <span className="hidden md:inline">[KNOTEN-KLICK] AUSWAHL</span>
@@ -517,7 +517,7 @@ export const OperationsHub: React.FC<OperationsHubProps> = ({
           <span>[ESC] HAUPTDECK</span>
         </div>
 
-        <div className="text-cyan-500/80">
+        <div className="text-cyan-200 font-medium">
           STATUS: <strong className="text-[#00FFAA]">SPRUNG BEREIT</strong> // GEMINI-FLASH v2.5
         </div>
       </footer>

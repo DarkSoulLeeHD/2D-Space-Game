@@ -125,22 +125,22 @@ export const EngineTelemetryOverlay: React.FC<EngineTelemetryOverlayProps> = ({
 
       {/* Automated Event Logs */}
       <div className="p-3 bg-[#080d14]">
-        <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1.5 flex justify-between">
+        <div className="text-[10px] text-cyan-300 font-bold uppercase tracking-wider mb-1.5 flex justify-between">
           <span>EVENT-LOGS (LETZTE EVENTS):</span>
-          <span className="text-emerald-400 text-[9px]">● LIVE-HOOK</span>
+          <span className="text-emerald-400 text-[9px] font-bold">● LIVE-HOOK</span>
         </div>
         <div className="space-y-1 max-h-28 overflow-y-auto pr-1 text-[9px] font-mono leading-tight">
           {events.map((ev) => (
-            <div key={ev.id} className="text-gray-300 truncate">
-              <span className="text-gray-500">[{ev.timestamp}]</span>{' '}
-              <span className="text-cyan-400 font-bold">[{ev.source}]</span> {ev.message}
+            <div key={ev.id} className="text-slate-200 font-medium truncate">
+              <span className="text-cyan-400 font-semibold">[{ev.timestamp}]</span>{' '}
+              <span className="text-[#00FFAA] font-bold">[{ev.source}]</span> {ev.message}
             </div>
           ))}
         </div>
       </div>
 
       {/* Footer shortcut helper */}
-      <div className="px-3 py-1 bg-[#05080c] border-t border-white/10 text-[9px] text-gray-400 flex justify-between">
+      <div className="px-3 py-1 bg-[#05080c] border-t border-white/10 text-[9px] text-slate-300 font-medium flex justify-between">
         <span>SHORTCUT: [SHIFT + D]</span>
         <span>ZERO-LEAK GC AKTIV</span>
       </div>

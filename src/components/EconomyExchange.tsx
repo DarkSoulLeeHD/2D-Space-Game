@@ -333,7 +333,7 @@ export const EconomyExchange: React.FC<EconomyExchangeProps> = ({
                   className={`w-6 h-5 text-center text-[10px] font-bold border transition-colors ${
                     threatLevel === lvl
                       ? 'border-amber-400 bg-amber-950/80 text-amber-300'
-                      : 'border-white/10 text-gray-500 hover:border-white/30'
+                      : 'border-white/20 text-slate-300 hover:border-white/50 font-medium'
                   }`}
                 >
                   T{lvl}
@@ -622,7 +622,7 @@ export const EconomyExchange: React.FC<EconomyExchangeProps> = ({
                         {/* Dynamic price with comparison */}
                         <div className="flex items-center justify-end gap-1.5">
                           {discountPercent !== 0 && (
-                            <span className="text-[10px] text-gray-500 line-through">
+                            <span className="text-[10px] text-slate-400 line-through font-medium">
                               {Math.round(item.basePriceCredits * 1.15)} AC
                             </span>
                           )}
@@ -719,7 +719,7 @@ export const EconomyExchange: React.FC<EconomyExchangeProps> = ({
                         ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400'
                         : wallet.chronoCrystals >= selectedNode.costCrystals
                         ? 'bg-amber-500/20 text-amber-300 border border-amber-400'
-                        : 'bg-gray-800 text-gray-500'
+                        : 'bg-cyan-950/40 text-slate-300 border border-cyan-900'
                     }`}
                   >
                     {selectedNode.unlocked
@@ -728,7 +728,7 @@ export const EconomyExchange: React.FC<EconomyExchangeProps> = ({
                   </span>
                 </div>
 
-                <p className="text-xs text-gray-300 leading-relaxed font-mono">
+                <p className="text-xs text-slate-200 leading-relaxed font-mono font-medium">
                   {selectedNode.description}
                 </p>
 
@@ -738,7 +738,7 @@ export const EconomyExchange: React.FC<EconomyExchangeProps> = ({
                 </div>
 
                 {selectedNode.requiredNodeId && (
-                  <div className="text-[11px] text-gray-400">
+                  <div className="text-[11px] text-slate-300 font-medium">
                     Voraussetzung:{' '}
                     <span className="text-white">
                       {researchNodes.find((n) => n.id === selectedNode.requiredNodeId)?.title ||
@@ -748,7 +748,7 @@ export const EconomyExchange: React.FC<EconomyExchangeProps> = ({
                 )}
               </div>
             ) : (
-              <div className="text-xs text-gray-500 italic">
+              <div className="text-xs text-slate-300 font-medium italic">
                 Wähle einen Knotenpunkt im Graph, um Details anzuzeigen.
               </div>
             )}

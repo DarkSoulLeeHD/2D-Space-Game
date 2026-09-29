@@ -436,38 +436,38 @@ export const ArsenalWorkshop: React.FC<ArsenalWorkshopProps> = ({ onBackToDeck }
       {/* CRT Scanline Overlay */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-40 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.35)_50%)] bg-[length:100%_4px] opacity-75"
+        className="pointer-events-none absolute inset-0 z-40 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.35)_50%)] bg-[length:100%_4px] opacity-35"
       />
 
       {/* ========================================================================= */}
       {/* ARSENAL-HEADER: RESSOURCEN & AUSRÜSTUNGS-STATUS */}
       {/* ========================================================================= */}
-      <header className="relative z-30 h-14 px-4 sm:px-6 flex items-center justify-between border-b border-cyan-900/60 bg-[#070b10] text-xs text-cyan-400 shrink-0">
+      <header className="relative z-30 h-14 px-4 sm:px-6 flex items-center justify-between border-b border-cyan-900/60 bg-[#070b10] text-xs text-cyan-300 font-medium shrink-0">
         <div className="flex items-center gap-3 sm:gap-6 truncate">
           <div className="flex items-center gap-2 font-bold tracking-widest text-[#00FFAA]">
             <span className="w-2.5 h-2.5 rounded-full bg-[#00FFAA] animate-pulse" />
             ASTRAEA FORGE-LINK // CAD-SUBSYSTEM v4.2
           </div>
-          <span className="hidden md:inline text-cyan-600">// AUTORISIERUNG: OPERATIVE VANCE</span>
+          <span className="hidden md:inline text-cyan-400 font-semibold">// AUTORISIERUNG: OPERATIVE VANCE</span>
         </div>
 
         {/* Resources Telemetry */}
         <div className="flex items-center gap-2 sm:gap-4 text-[11px] sm:text-xs">
           <div className="px-2.5 py-1 bg-cyan-950/40 border border-cyan-800/60">
-            <span className="text-cyan-500/70">TITAN-NANITEN:</span>{' '}
+            <span className="text-cyan-300 font-semibold">TITAN-NANITEN:</span>{' '}
             <strong className="text-[#00FFAA] font-bold">{player.nanites} TN</strong>
           </div>
           <div className="px-2.5 py-1 bg-cyan-950/40 border border-cyan-800/60">
-            <span className="text-cyan-500/70">CHRONO-KRISTALLE:</span>{' '}
-            <strong className="text-amber-400 font-bold">{player.chronoCrystals} CK</strong>
+            <span className="text-cyan-300 font-semibold">CHRONO-KRISTALLE:</span>{' '}
+            <strong className="text-amber-300 font-bold">{player.chronoCrystals} CK</strong>
           </div>
           <div className="hidden sm:flex px-2.5 py-1 bg-cyan-950/40 border border-cyan-800/60">
-            <span className="text-cyan-500/70">CREDITS:</span>{' '}
+            <span className="text-cyan-300 font-semibold">CREDITS:</span>{' '}
             <strong className="text-gray-100 font-bold">{player.credits} AC</strong>
           </div>
           <div className="px-2.5 py-1 bg-cyan-950/40 border border-cyan-800/60">
-            <span className="text-cyan-500/70">RIG:</span>{' '}
-            <strong className="text-cyan-300 font-bold">{player.rigIntegrity}%</strong>
+            <span className="text-cyan-300 font-semibold">RIG:</span>{' '}
+            <strong className="text-cyan-200 font-bold">{player.rigIntegrity}%</strong>
           </div>
           <button
             onClick={() => {
@@ -550,7 +550,7 @@ export const ArsenalWorkshop: React.FC<ArsenalWorkshopProps> = ({ onBackToDeck }
                     <div className="font-bold">SEKUNDÄR: VOLT-PISTOLE</div>
                     <div className="text-[10px] opacity-70">Kompakte Energie-Waffe // 18 Schuss</div>
                   </div>
-                  <span className="text-[10px] text-gray-500 border border-gray-800 px-1.5 py-0.5">BEREIT</span>
+                  <span className="text-[10px] text-cyan-300 border border-cyan-700/80 px-1.5 py-0.5 font-medium">BEREIT</span>
                 </button>
               </div>
             )}
@@ -558,16 +558,16 @@ export const ArsenalWorkshop: React.FC<ArsenalWorkshopProps> = ({ onBackToDeck }
             {/* Tactical Drone Subsystem View */}
             {activeTab === 'DRONE' && (
               <div className="p-3 bg-cyan-950/20 border border-cyan-800/60 mb-3 space-y-2 text-xs">
-                <div className="flex justify-between items-center text-[10px] text-cyan-400 font-bold border-b border-cyan-900 pb-1">
+                <div className="flex justify-between items-center text-[10px] text-cyan-300 font-bold border-b border-cyan-900 pb-1">
                   <span>DROHNEN-CHASSIS: {drone.name}</span>
                   <span>HP: {drone.hullHp}/{drone.maxHullHp}</span>
                 </div>
-                <div className="text-[11px] text-gray-300">
+                <div className="text-[11px] text-slate-200 font-medium">
                   Autonomie: <strong>{drone.batteryRounds} Runden / Ladezyklus</strong>
                 </div>
 
                 <div className="space-y-1.5 pt-1">
-                  <div className="text-[10px] text-cyan-500 font-bold">PROTOKOLL-EINSTELLUNG:</div>
+                  <div className="text-[10px] text-cyan-300 font-bold">PROTOKOLL-EINSTELLUNG:</div>
                   {[
                     { id: 'SHIELD_LINK' as DroneBehaviorMode, label: 'SCHILD-LINK', desc: '+25 Schild-Regen / Runde' },
                     { id: 'DEFENSE_TURRET' as DroneBehaviorMode, label: 'ABWEHR-TURM', desc: 'Sperrfeuer im 3-Felder-Radius' },
@@ -581,12 +581,12 @@ export const ArsenalWorkshop: React.FC<ArsenalWorkshopProps> = ({ onBackToDeck }
                       }}
                       className={`w-full p-2 border text-left cursor-pointer transition-colors ${
                         drone.behaviorMode === m.id
-                          ? 'border-cyan-400 bg-cyan-950/60 text-cyan-300 font-bold'
-                          : 'border-cyan-900/40 bg-black/40 text-gray-400 hover:border-cyan-700'
+                          ? 'border-cyan-400 bg-cyan-950/60 text-cyan-200 font-bold'
+                          : 'border-cyan-900/60 bg-black/40 text-slate-300 hover:border-cyan-700 font-medium'
                       }`}
                     >
                       <div className="text-xs">[{drone.behaviorMode === m.id ? '•' : ' '}] {m.label}</div>
-                      <div className="text-[10px] opacity-75">{m.desc}</div>
+                      <div className="text-[10px] text-slate-300">{m.desc}</div>
                     </button>
                   ))}
                 </div>
@@ -700,7 +700,7 @@ export const ArsenalWorkshop: React.FC<ArsenalWorkshopProps> = ({ onBackToDeck }
               </div>
             </div>
           ) : (
-            <div className="text-[11px] text-gray-500 text-center p-3 border border-cyan-950">
+            <div className="text-[11px] text-slate-300 font-medium text-center p-3 border border-cyan-900 bg-black/30">
               WÄHLE EIN INVENTAR-FELD ZUR INSPEKTION
             </div>
           )}
@@ -711,7 +711,7 @@ export const ArsenalWorkshop: React.FC<ArsenalWorkshopProps> = ({ onBackToDeck }
         {/* ----------------------------------------------------------------------- */}
         <section className="lg:col-span-6 relative border-r border-cyan-900/60 bg-[#06080d] flex flex-col overflow-hidden">
           {/* Sockets Quick Navigation Bar */}
-          <div className="h-10 px-3 bg-[#080c12] border-b border-cyan-900/60 flex items-center justify-between text-[11px] text-cyan-400">
+          <div className="h-10 px-3 bg-[#080c12] border-b border-cyan-900/60 flex items-center justify-between text-[11px] text-cyan-300">
             <span className="font-bold tracking-widest text-[10px]">
               SOCKEL-MATRIX [1-6]:
             </span>
@@ -728,10 +728,10 @@ export const ArsenalWorkshop: React.FC<ArsenalWorkshopProps> = ({ onBackToDeck }
                     }}
                     className={`px-2 py-0.5 border text-[10px] font-mono cursor-pointer transition-colors ${
                       isSelected
-                        ? 'border-cyan-400 bg-cyan-950 text-cyan-300 font-bold'
+                        ? 'border-cyan-400 bg-cyan-950 text-cyan-200 font-bold'
                         : isEquipped
-                        ? 'border-cyan-700 bg-black/40 text-cyan-400'
-                        : 'border-gray-800 bg-black/30 text-gray-600 hover:border-cyan-800'
+                        ? 'border-cyan-700 bg-black/40 text-cyan-300'
+                        : 'border-cyan-900/80 bg-black/30 text-slate-300 hover:border-cyan-600'
                     }`}
                   >
                     [{idx + 1}] {s.slice(0, 3).toUpperCase()}
@@ -756,14 +756,14 @@ export const ArsenalWorkshop: React.FC<ArsenalWorkshopProps> = ({ onBackToDeck }
             <div className="h-28 p-3 bg-[#090d14] border-t border-cyan-900/60 flex items-center justify-between text-xs">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-cyan-500 font-bold text-[10px] tracking-widest uppercase">
+                  <span className="text-cyan-300 font-bold text-[10px] tracking-widest uppercase">
                     SOCKEL: [{selectedSlot.toUpperCase()}]
                   </span>
                   <span
                     className={`px-1.5 py-0.2 border text-[9px] font-bold ${
                       activeWeapon.installedMods[selectedSlot]
                         ? 'bg-cyan-950 text-[#00FFAA] border-cyan-500'
-                        : 'bg-black text-gray-500 border-gray-800'
+                        : 'bg-black/60 text-slate-300 border-cyan-900'
                     }`}
                   >
                     {activeWeapon.installedMods[selectedSlot] ? 'BELEGT' : 'LEER'}
@@ -772,15 +772,15 @@ export const ArsenalWorkshop: React.FC<ArsenalWorkshopProps> = ({ onBackToDeck }
 
                 {activeWeapon.installedMods[selectedSlot] ? (
                   <>
-                    <div className="font-bold text-gray-200">
+                    <div className="font-bold text-gray-100">
                       {activeWeapon.installedMods[selectedSlot]?.name}
                     </div>
-                    <div className="text-[10px] text-gray-400">
+                    <div className="text-[10px] text-slate-300 font-medium">
                       {activeWeapon.installedMods[selectedSlot]?.description}
                     </div>
                   </>
                 ) : (
-                  <div className="text-[11px] text-gray-500">
+                  <div className="text-[11px] text-slate-300 font-medium">
                     Kein Modul installiert. Wähle ein kompatibles Modul im Inventar links aus.
                   </div>
                 )}
@@ -863,10 +863,10 @@ export const ArsenalWorkshop: React.FC<ArsenalWorkshopProps> = ({ onBackToDeck }
                   {/* Overclock Action */}
                   <button
                     onClick={() => handleOverclockMod(selectedInvIndex!)}
-                    className="w-full py-2.5 bg-cyan-950 border border-cyan-400 text-cyan-300 font-bold hover:bg-cyan-500 hover:text-black transition-colors text-[11px] cursor-pointer"
+                    className="w-full py-2.5 bg-cyan-950 border border-cyan-400 text-cyan-200 font-bold hover:bg-cyan-500 hover:text-black transition-colors text-[11px] cursor-pointer"
                   >
                     [1] MODUL VEREDELN (OVERCLOCK)
-                    <div className="text-[9px] font-normal opacity-80 mt-0.5">
+                    <div className="text-[9px] font-medium text-cyan-300 mt-0.5">
                       Kosten: 120 TN + 1 CK // Chance: 80%
                     </div>
                   </button>
@@ -874,16 +874,16 @@ export const ArsenalWorkshop: React.FC<ArsenalWorkshopProps> = ({ onBackToDeck }
                   {/* Scrap Action */}
                   <button
                     onClick={() => handleScrapItem(selectedInvIndex!)}
-                    className="w-full py-2 bg-red-950/40 border border-red-500/80 text-red-300 font-bold hover:bg-red-600 hover:text-white transition-colors text-[11px] cursor-pointer"
+                    className="w-full py-2 bg-red-950/40 border border-red-500/80 text-red-200 font-bold hover:bg-red-600 hover:text-white transition-colors text-[11px] cursor-pointer"
                   >
                     [2] SCHROTT DEMONTIEREN (SCRAP)
-                    <div className="text-[9px] font-normal opacity-80 mt-0.5">
+                    <div className="text-[9px] font-medium text-red-300 mt-0.5">
                       Ertrag: +{selectedInventoryItem.scrapYield} Titan-Naniten
                     </div>
                   </button>
                 </div>
               ) : (
-                <div className="p-4 bg-black/30 border border-cyan-950 text-[11px] text-gray-400 text-center leading-relaxed">
+                <div className="p-4 bg-black/40 border border-cyan-900 text-[11px] text-slate-300 text-center leading-relaxed font-medium">
                   Wähle ein Modul im Inventar, um Schmiede-Operationen (Veredelung, Zerlegen) durchzuführen.
                 </div>
               )}
@@ -908,8 +908,8 @@ export const ArsenalWorkshop: React.FC<ArsenalWorkshopProps> = ({ onBackToDeck }
       {/* ========================================================================= */}
       {/* ARSENAL-FOOTER: BEFEHLS-DOCK */}
       {/* ========================================================================= */}
-      <footer className="relative z-30 h-12 px-4 sm:px-6 flex items-center justify-between border-t border-cyan-900/60 bg-[#070b10] text-[10px] sm:text-xs text-cyan-400 shrink-0">
-        <div className="flex items-center gap-4 text-gray-400">
+      <footer className="relative z-30 h-12 px-4 sm:px-6 flex items-center justify-between border-t border-cyan-900/60 bg-[#070b10] text-[10px] sm:text-xs text-cyan-300 font-medium shrink-0">
+        <div className="flex items-center gap-4 text-slate-200">
           <span>[1-6] SOCKEL WÄHLEN</span>
           <span className="hidden sm:inline">[E] INSTALLIEREN</span>
           <span className="hidden md:inline">[X] ZERLEGEN</span>
@@ -917,7 +917,7 @@ export const ArsenalWorkshop: React.FC<ArsenalWorkshopProps> = ({ onBackToDeck }
           <span>[ESC] HAUPTDECK</span>
         </div>
 
-        <div className="text-cyan-500/80">
+        <div className="text-cyan-200 font-medium">
           NANITEN-INJEKTOR: <strong className="text-[#00FFAA]">BEREIT</strong> // 60 FPS
         </div>
       </footer>

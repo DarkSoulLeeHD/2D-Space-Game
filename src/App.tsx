@@ -81,7 +81,7 @@ export default function App() {
 
   return (
     <div
-      className="relative w-screen h-screen bg-[#070a0e] text-[#d8e2dc] font-mono overflow-hidden transition-all duration-300"
+      className="relative w-screen h-screen bg-[#070a0e] text-[#e2e8f0] font-mono font-medium overflow-hidden transition-all duration-300 antialiased"
       style={{
         transform: terminalSettings.display.isCurvatureEnabled
           ? 'perspective(1200px) rotateX(1deg)'

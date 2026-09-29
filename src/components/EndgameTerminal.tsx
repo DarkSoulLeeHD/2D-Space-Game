@@ -268,17 +268,17 @@ export const EndgameTerminal: React.FC<EndgameTerminalProps> = ({
               NULL-ZONE // APEX-RAID TERMINAL SYS-ENDG-14
             </h1>
           </div>
-          <div className="hidden lg:flex items-center gap-3 text-xs text-gray-400 border-l border-white/10 pl-4">
+          <div className="hidden lg:flex items-center gap-3 text-xs text-slate-300 font-medium border-l border-white/10 pl-4">
             <span>SEED:</span>
             <span className="text-cyan-300 font-bold bg-black/50 px-2 py-0.5 border border-cyan-500/30">
               {weeklySeed}
             </span>
-            <span className="text-gray-500">|</span>
+            <span className="text-cyan-400">|</span>
             <span>WORLD-TIER:</span>
             <span className="text-amber-400 font-bold">
               [ RESONANZ {['I', 'II', 'III', 'IV', 'V'][worldTier - 1]} ]
             </span>
-            <span className="text-[10px] text-gray-500">(x{WORLD_TIER_MULTIPLIERS[worldTier]} Score)</span>
+            <span className="text-[10px] text-slate-300 font-medium">(x{WORLD_TIER_MULTIPLIERS[worldTier]} Score)</span>
           </div>
         </div>
 
@@ -653,7 +653,7 @@ export const EndgameTerminal: React.FC<EndgameTerminalProps> = ({
                         <div className="font-bold">
                           [LVL {r.level}] {r.title}
                         </div>
-                        <div className="text-[9px] text-gray-500">{r.rewardValue}</div>
+                        <div className="text-[9px] text-slate-300 font-medium">{r.rewardValue}</div>
                       </div>
                       <span className="text-[9px] font-bold">
                         {r.unlocked ? '✓ AKTIV' : 'GESPERRT'}

@@ -257,13 +257,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {/* CRT Scanline Shader */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-40 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.35)_50%)] bg-[length:100%_4px] opacity-75"
+        className="pointer-events-none absolute inset-0 z-40 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.35)_50%)] bg-[length:100%_4px] opacity-35"
       />
 
       {/* ========================================================================= */}
       {/* TAKTISCHER HEADER: TELEMETRIE & SYSTEM-ZEIT */}
       {/* ========================================================================= */}
-      <header className="relative z-30 h-14 px-4 sm:px-6 flex items-center justify-between border-b border-cyan-900/60 bg-[#070a0e]/95 text-xs text-cyan-400">
+      <header className="relative z-30 h-14 px-4 sm:px-6 flex items-center justify-between border-b border-cyan-900/60 bg-[#070a0e]/95 text-xs text-cyan-300">
         <div className="flex items-center gap-3 sm:gap-6 truncate">
           <div
             onClick={(e) => {
@@ -272,13 +272,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               }
             }}
             title="Dreifachklick oder Shift+D für Engine-Telemetrie"
-            className="flex items-center gap-2 font-bold tracking-widest text-cyan-300 cursor-pointer hover:text-white transition-colors"
+            className="flex items-center gap-2 font-bold tracking-widest text-cyan-200 cursor-pointer hover:text-white transition-colors"
           >
             <span className="w-2.5 h-2.5 rounded-full bg-[#00FFAA] shadow-[0_0_8px_#00FFAA]" />
             ASTRAEA MODEL-7 TERMINAL
           </div>
-          <span className="hidden md:inline text-cyan-600 font-semibold">KERNEL v9.4.2</span>
-          <span className="hidden lg:inline text-cyan-500/70">
+          <span className="hidden md:inline text-cyan-400 font-semibold">KERNEL v9.4.2</span>
+          <span className="hidden lg:inline text-cyan-300 font-medium">
             ZEIT: 2026-10-24 14:02 UTC
           </span>
         </div>
@@ -286,16 +286,16 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         {/* Player Currencies & Rig Telemetry */}
         <div className="flex items-center gap-2 sm:gap-5 text-[11px] sm:text-xs">
           <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 bg-cyan-950/40 border border-cyan-800/60">
-            <span className="text-cyan-500/70">CREDITS:</span>
+            <span className="text-cyan-300 font-semibold">CREDITS:</span>
             <span className="font-bold text-gray-100">{player.credits} AC</span>
           </div>
           <div className="flex items-center gap-1.5 px-2.5 py-1 bg-cyan-950/40 border border-cyan-800/60">
-            <span className="text-cyan-500/70">NANITEN:</span>
+            <span className="text-cyan-300 font-semibold">NANITEN:</span>
             <span className="font-bold text-[#00FFAA]">{player.nanites} TN</span>
           </div>
           <div className="flex items-center gap-1.5 px-2.5 py-1 bg-cyan-950/40 border border-cyan-800/60">
-            <span className="text-cyan-500/70">RIG:</span>
-            <span className="font-bold text-cyan-300">{player.rigIntegrity}%</span>
+            <span className="text-cyan-300 font-semibold">RIG:</span>
+            <span className="font-bold text-cyan-200">{player.rigIntegrity}%</span>
           </div>
 
           {/* Cloud Sync / Neural Login Status Button */}
@@ -307,13 +307,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             className={`px-2.5 py-1 border font-bold text-[10px] tracking-wider flex items-center gap-1.5 cursor-pointer transition-colors ${
               cloudUserEmail
                 ? 'bg-cyan-950/70 border-cyan-400 text-[#00FFAA] shadow-[0_0_10px_rgba(0,255,170,0.3)]'
-                : 'bg-black/60 border-cyan-800/80 text-cyan-400/80 hover:text-cyan-300 hover:border-cyan-500'
+                : 'bg-black/60 border-cyan-700 text-cyan-300 hover:text-white hover:border-cyan-400'
             }`}
             title={cloudUserEmail ? `Neural-Link aktiv: ${cloudUserEmail}` : 'Neural-Login & Cloud-Sync'}
           >
             <span
               className={`w-1.5 h-1.5 rounded-full ${
-                cloudUserEmail ? 'bg-[#00FFAA] shadow-[0_0_6px_#00FFAA]' : 'bg-gray-500'
+                cloudUserEmail ? 'bg-[#00FFAA] shadow-[0_0_6px_#00FFAA]' : 'bg-cyan-500'
               }`}
             />
             <span>{cloudUserEmail ? `[CLOUD: ${(cloudCallsign || 'VANCE').toUpperCase()}]` : '[CLOUD-SYNC]'}</span>
@@ -372,7 +372,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           {/* Sektor-Diagnose Dock */}
           <div className="h-32 sm:h-36 p-4 border-t border-cyan-900/60 bg-[#090d13] flex flex-col justify-between text-xs">
             <div className="flex items-center justify-between">
-              <span className="text-cyan-500 font-bold tracking-widest text-[11px]">
+              <span className="text-cyan-300 font-bold tracking-widest text-[11px]">
                 [SEKTOR-DIAGNOSE // {selectedSector.code}]
               </span>
               <span
@@ -388,19 +388,19 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               </span>
             </div>
 
-            <p className="text-gray-300 text-[11px] sm:text-xs leading-relaxed line-clamp-2">
+            <p className="text-slate-200 text-[11px] sm:text-xs leading-relaxed line-clamp-2">
               {selectedSector.description}
             </p>
 
-            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-cyan-950 text-[10px] text-cyan-400/80">
+            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-cyan-950 text-[10px] text-cyan-300">
               <div>
-                TEMP: <span className="text-gray-200 font-bold">{selectedSector.temperature}</span>
+                TEMP: <span className="text-gray-100 font-bold">{selectedSector.temperature}</span>
               </div>
               <div>
-                GRAVITATION: <span className="text-gray-200 font-bold">{selectedSector.gravity}</span>
+                GRAVITATION: <span className="text-gray-100 font-bold">{selectedSector.gravity}</span>
               </div>
               <div className="truncate">
-                GEFAHR: <span className="text-amber-400 font-bold">STUFE {selectedSector.threatLevel}/5</span>
+                GEFAHR: <span className="text-amber-300 font-bold">STUFE {selectedSector.threatLevel}/5</span>
               </div>
             </div>
           </div>
@@ -416,10 +416,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         >
           <div>
             <div className="flex items-center justify-between pb-3 mb-4 border-b border-cyan-900/60">
-              <span className="text-xs text-cyan-500/80 tracking-[0.25em] font-bold">
+              <span className="text-xs text-cyan-300 tracking-[0.25em] font-bold">
                 HAUPT-BEFEHLS-DECK
               </span>
-              <span className="text-[10px] text-cyan-400/60 font-mono">
+              <span className="text-[10px] text-cyan-300 font-mono font-medium">
                 TASTEN [1-5] ODER PFEILE
               </span>
             </div>
@@ -450,17 +450,17 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     />
 
                     <div className="pr-2 truncate">
-                      <div className="text-[10px] sm:text-xs text-cyan-500/70 tracking-widest font-semibold">
+                      <div className="text-[10px] sm:text-xs text-cyan-300 tracking-widest font-bold">
                         BEFEHL {item.num}
                       </div>
                       <div
                         className={`text-sm sm:text-base font-bold tracking-wider truncate ${
-                          isFocused ? 'text-cyan-300' : 'text-gray-200 group-hover:text-cyan-300'
+                          isFocused ? 'text-cyan-200' : 'text-gray-100 group-hover:text-cyan-200'
                         }`}
                       >
                         {item.title}
                       </div>
-                      <div className="text-[11px] text-gray-400 truncate mt-0.5">
+                      <div className="text-[11px] text-slate-300 truncate mt-0.5 font-medium">
                         {item.subtitle}
                       </div>
                     </div>
@@ -721,19 +721,19 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {/* ========================================================================= */}
       {/* BOTTOM-DOCK: HARDWARE-STATUS & PROFIL-VALIDIERUNG */}
       {/* ========================================================================= */}
-      <footer className="relative z-30 h-14 px-4 sm:px-6 flex items-center justify-between border-t border-cyan-900/60 bg-[#070a0e]/95 text-[10px] sm:text-xs text-cyan-400">
+      <footer className="relative z-30 h-14 px-4 sm:px-6 flex items-center justify-between border-t border-cyan-900/60 bg-[#070a0e]/95 text-[10px] sm:text-xs text-cyan-300">
         <div className="flex items-center gap-2 sm:gap-4 truncate">
-          <span className="font-bold text-gray-200">STATUS: ONLINE</span>
-          <span className="hidden sm:inline text-cyan-600">//</span>
-          <span className="hidden md:inline text-cyan-500/80">
+          <span className="font-bold text-gray-100">STATUS: ONLINE</span>
+          <span className="hidden sm:inline text-cyan-400">//</span>
+          <span className="hidden md:inline text-cyan-200 font-medium">
             VERBINDUNG ZUM KERNEL HERGESTELLT
           </span>
-          <span className="px-1.5 py-0.5 bg-cyan-950 text-cyan-300 border border-cyan-700/60 text-[9px]">
+          <span className="px-1.5 py-0.5 bg-cyan-950 text-cyan-200 border border-cyan-700/60 text-[9px] font-bold">
             STORAGE: {getStorageUsageKb()}
           </span>
         </div>
 
-        <div className="flex items-center gap-3 text-cyan-500/80">
+        <div className="flex items-center gap-3 text-cyan-200 font-medium">
           <span className="hidden sm:inline font-mono">INPUT: [1-5] / TASTATUR / MAUS</span>
           <button
             onClick={() => {
@@ -741,7 +741,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               setIsMuted(muted);
               showToast(muted ? 'AUDIO STUMM' : 'AUDIO AKTIV');
             }}
-            className="px-2 py-0.5 border border-cyan-800 bg-cyan-950/40 hover:bg-cyan-500 hover:text-black transition-colors"
+            className="px-2 py-0.5 border border-cyan-700 bg-cyan-950/60 text-cyan-200 hover:bg-cyan-500 hover:text-black transition-colors font-bold"
           >
             {isMuted ? '[M: STUMM]' : '[M: AUDIO AN]'}
           </button>

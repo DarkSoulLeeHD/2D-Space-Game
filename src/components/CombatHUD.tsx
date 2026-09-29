@@ -969,10 +969,10 @@ export const CombatHUD: React.FC<CombatHUDProps> = ({
               AICR-MODEL-7 // {sectorName}
             </span>
           </div>
-          <span className="hidden md:inline px-2 py-0.5 bg-red-950/70 border border-red-500/50 text-red-400 text-[10px] font-bold">
+          <span className="hidden md:inline px-2 py-0.5 bg-red-950/70 border border-red-500/50 text-red-300 text-[10px] font-bold">
             BEDROHUNG: STUFE {initialThreatLevel}
           </span>
-          <span className="hidden sm:inline text-gray-500 text-[11px]">RUNDE: {round}</span>
+          <span className="hidden sm:inline text-cyan-300 text-[11px] font-bold">RUNDE: {round}</span>
         </div>
 
         {/* Phase Indicator & Encounter Controls */}
@@ -989,7 +989,7 @@ export const CombatHUD: React.FC<CombatHUDProps> = ({
             className={`px-3 py-1 border font-bold text-xs tracking-wider transition-all ${
               phase === 'PLAYER_TURN'
                 ? 'bg-cyan-950 border-[#00FFAA] text-[#00FFAA] shadow-[0_0_10px_rgba(0,255,170,0.3)]'
-                : 'bg-red-950 border-red-500 text-red-400 animate-pulse'
+                : 'bg-red-950 border-red-500 text-red-300 animate-pulse'
             }`}
           >
             {phase === 'PLAYER_TURN' ? 'OPERATIVE PHASE' : 'FEIND PHASE...'}
@@ -997,7 +997,7 @@ export const CombatHUD: React.FC<CombatHUDProps> = ({
 
           <button
             onClick={onExitCombat}
-            className="px-2.5 py-1 border border-cyan-800 hover:border-red-500 text-gray-400 hover:text-red-400 text-[11px] transition-colors"
+            className="px-2.5 py-1 border border-cyan-800 hover:border-red-500 text-slate-300 hover:text-red-300 text-[11px] transition-colors font-medium"
           >
             RÜCKZUG [ESC]
           </button>
@@ -1021,14 +1021,14 @@ export const CombatHUD: React.FC<CombatHUDProps> = ({
         <section className="w-full lg:w-72 border-b lg:border-b-0 lg:border-r border-cyan-900/60 bg-[#06090e]/95 p-3 flex flex-col justify-between shrink-0 text-xs">
           <div className="space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-cyan-950">
-              <span className="font-bold text-gray-300">TELEMETRIE: VANCE</span>
-              <span className="text-[10px] text-cyan-500">OPERATIVE-01</span>
+              <span className="font-bold text-gray-200">TELEMETRIE: VANCE</span>
+              <span className="text-[10px] text-cyan-300 font-bold">OPERATIVE-01</span>
             </div>
 
             {/* Health Bar */}
             <div className="space-y-1">
               <div className="flex justify-between text-[11px]">
-                <span className="text-gray-400">VITAL-INTEGRITÄT</span>
+                <span className="text-slate-300 font-medium">VITAL-INTEGRITÄT</span>
                 <span className="font-bold text-emerald-400">
                   {playerEntity.hp}/{playerEntity.maxHp} HP
                 </span>
@@ -1044,7 +1044,7 @@ export const CombatHUD: React.FC<CombatHUDProps> = ({
             {/* Shield Bar */}
             <div className="space-y-1">
               <div className="flex justify-between text-[11px]">
-                <span className="text-gray-400">KINETIK-SCHILD</span>
+                <span className="text-slate-300 font-medium">KINETIK-SCHILD</span>
                 <span className="font-bold text-cyan-300">
                   {playerEntity.shield}/{playerEntity.maxShield} MJ
                 </span>
@@ -1060,19 +1060,19 @@ export const CombatHUD: React.FC<CombatHUDProps> = ({
             {/* Armor & Entropy */}
             <div className="grid grid-cols-2 gap-2 pt-1 text-[11px]">
               <div className="p-2 bg-black/50 border border-cyan-950">
-                <div className="text-gray-500 text-[10px]">RÜSTUNG</div>
+                <div className="text-cyan-300 text-[10px] font-bold">RÜSTUNG</div>
                 <div className="font-bold text-white text-sm">{playerEntity.armor} PT</div>
               </div>
               <div className="p-2 bg-black/50 border border-cyan-950">
-                <div className="text-gray-500 text-[10px]">ENTROPIE</div>
-                <div className="font-bold text-purple-400 text-sm">{entropyLevel}%</div>
+                <div className="text-cyan-300 text-[10px] font-bold">ENTROPIE</div>
+                <div className="font-bold text-purple-300 text-sm">{entropyLevel}%</div>
               </div>
             </div>
 
             {/* Med-Stims Inventory */}
             <div className="p-2.5 bg-black/60 border border-cyan-950 space-y-1.5">
               <div className="flex justify-between items-center text-[11px]">
-                <span className="text-gray-400">MED-STIM DEPOT:</span>
+                <span className="text-slate-300 font-medium">MED-STIM DEPOT:</span>
                 <span className="text-emerald-400 font-bold">{medStims}/{maxMedStims}</span>
               </div>
               <button
@@ -1088,13 +1088,13 @@ export const CombatHUD: React.FC<CombatHUDProps> = ({
           {/* Scarab-IV Drone Status */}
           <div className="pt-3 border-t border-cyan-950">
             <div className="flex justify-between text-[11px] mb-1">
-              <span className="text-gray-400">DROHNE SCARAB-IV</span>
-              <span className="text-[#00FFAA] text-[10px]">VERBUNDEN</span>
+              <span className="text-slate-300 font-medium">DROHNE SCARAB-IV</span>
+              <span className="text-[#00FFAA] text-[10px] font-bold">VERBUNDEN</span>
             </div>
             <div className="w-full h-1.5 bg-black border border-cyan-950 mb-2">
               <div className="h-full bg-[#00FFAA] w-full" />
             </div>
-            <div className="text-[10px] text-gray-500 leading-tight">
+            <div className="text-[10px] text-slate-300 font-medium leading-tight">
               Astraea Drohnen-Link bereit. [4] Schild-Regeneration (+25 MJ) einsatzbereit.
             </div>
           </div>
@@ -1170,30 +1170,30 @@ export const CombatHUD: React.FC<CombatHUDProps> = ({
                 )}
               </div>
             ) : (
-              <div className="p-4 bg-black/40 border border-cyan-950 text-gray-500 text-center text-xs">
+              <div className="p-4 bg-black/50 border border-cyan-900 text-cyan-300 font-medium text-center text-xs">
                 Kein lebendes Feind-Ziel erfasst.
               </div>
             )}
 
             {/* Combat Logs Output */}
             <div className="space-y-1.5">
-              <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+              <div className="text-[10px] text-cyan-300 font-bold uppercase tracking-wider">
                 GEFECHTS-LOG // STREAM
               </div>
-              <div className="h-44 overflow-y-auto bg-black/80 border border-cyan-950 p-2 space-y-1 text-[10px] font-mono scrollbar-thin">
+              <div className="h-44 overflow-y-auto bg-black/90 border border-cyan-900 p-2 space-y-1 text-[10px] font-mono scrollbar-thin">
                 {combatLogs.map((log, i) => (
                   <div
                     key={i}
-                    className={`leading-tight ${
+                    className={`leading-tight font-medium ${
                       log.includes('ELIMINIERT') || log.includes('BEUTE')
                         ? 'text-[#00FFAA]'
                         : log.includes('TREFFER')
-                        ? 'text-yellow-400'
+                        ? 'text-yellow-300'
                         : log.includes('FUNK-INTERZEPT')
                         ? 'text-red-400 font-bold'
                         : log.includes('WARNUNG') || log.includes('erleidet')
-                        ? 'text-red-300'
-                        : 'text-gray-400'
+                        ? 'text-red-300 font-semibold'
+                        : 'text-slate-300'
                     }`}
                   >
                     {log}
@@ -1208,7 +1208,7 @@ export const CombatHUD: React.FC<CombatHUDProps> = ({
             <button
               onClick={handleEndTurn}
               disabled={phase !== 'PLAYER_TURN'}
-              className="w-full py-3 bg-cyan-950 border border-cyan-400 text-cyan-300 font-bold hover:bg-cyan-500 hover:text-black transition-colors text-xs tracking-widest cursor-pointer disabled:opacity-50"
+              className="w-full py-3 bg-cyan-950 border border-cyan-400 text-cyan-200 font-bold hover:bg-cyan-500 hover:text-black transition-colors text-xs tracking-widest cursor-pointer disabled:opacity-50"
             >
               [LEERTASTE] RUNDE BEENDEN &gt;
             </button>
@@ -1219,10 +1219,10 @@ export const CombatHUD: React.FC<CombatHUDProps> = ({
       {/* ========================================================================= */}
       {/* ZONE 5: AKTIONS-MATRIX & WAFFEN-DOCK (UNTEN // VOLLE BREITE) */}
       {/* ========================================================================= */}
-      <footer className="relative z-30 min-h-20 p-3 sm:px-6 bg-[#070b10] border-t border-cyan-900/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-cyan-400 shrink-0">
+      <footer className="relative z-30 min-h-20 p-3 sm:px-6 bg-[#070b10] border-t border-cyan-900/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-cyan-300 font-medium shrink-0">
         {/* AP-Pool (6 AP as per specs) */}
         <div className="flex items-center gap-3">
-          <span className="text-[11px] text-cyan-500 font-bold">AP-POOL:</span>
+          <span className="text-[11px] text-cyan-300 font-bold">AP-POOL:</span>
           <div className="flex gap-1.5">
             {Array(maxActionPoints)
               .fill(null)
@@ -1232,14 +1232,14 @@ export const CombatHUD: React.FC<CombatHUDProps> = ({
                   className={`w-5 h-5 border flex items-center justify-center font-bold text-[10px] ${
                     i < actionPoints
                       ? 'bg-[#00FFAA] text-black border-[#00FFAA] shadow-[0_0_8px_#00FFAA]'
-                      : 'bg-black/60 text-gray-600 border-gray-800'
+                      : 'bg-black/60 text-cyan-700 border-cyan-900'
                   }`}
                 >
                   ◆
                 </div>
               ))}
           </div>
-          <span className="text-gray-300 font-bold text-[11px]">({actionPoints}/{maxActionPoints} AP)</span>
+          <span className="text-gray-200 font-bold text-[11px]">({actionPoints}/{maxActionPoints} AP)</span>
         </div>
 
         {/* Action Buttons Matrix */}
@@ -1261,26 +1261,26 @@ export const CombatHUD: React.FC<CombatHUDProps> = ({
                 className={`px-3 py-2 border font-bold text-xs cursor-pointer transition-colors ${
                   isSelected
                     ? 'border-[#00FFAA] bg-cyan-950 text-[#00FFAA] shadow-[0_0_12px_rgba(0,255,170,0.3)]'
-                    : 'border-cyan-900/60 bg-black/40 text-gray-300 hover:border-cyan-600'
+                    : 'border-cyan-800 bg-black/40 text-slate-200 hover:border-cyan-500'
                 }`}
               >
-                [{act.num}] {act.label} <span className="text-[10px] opacity-75 font-normal">({act.cost})</span>
+                [{act.num}] {act.label} <span className="text-[10px] text-cyan-200 font-medium">({act.cost})</span>
               </button>
             );
           })}
 
           <button
             onClick={handleReload}
-            className="px-3 py-2 border border-cyan-800 bg-black/40 text-gray-300 hover:bg-cyan-950 hover:text-cyan-300 text-xs font-bold"
+            className="px-3 py-2 border border-cyan-700 bg-black/40 text-slate-200 hover:bg-cyan-950 hover:text-cyan-200 text-xs font-bold"
           >
             [R] NACHLADEN ({ammoCurrent}/{ammoMax})
           </button>
         </div>
 
         {/* Weapon Ammo Readout */}
-        <div className="hidden xl:flex items-center gap-2 text-[11px] text-gray-300 bg-black/50 px-3 py-1.5 border border-cyan-900/60">
+        <div className="hidden xl:flex items-center gap-2 text-[11px] text-gray-200 bg-black/60 px-3 py-1.5 border border-cyan-800/80">
           <span>WAFFE: <strong className="text-white">ARC-70 IMPULS</strong></span>
-          <span className="text-cyan-500">MUNITION: {ammoCurrent}/{ammoMax}</span>
+          <span className="text-cyan-300 font-bold">MUNITION: {ammoCurrent}/{ammoMax}</span>
         </div>
       </footer>
     </div>

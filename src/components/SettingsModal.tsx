@@ -190,19 +190,19 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           <span className="font-bold tracking-widest text-gray-100">
             ASTRAEA MODEL-7 BIOS // PARAMETER-OVERRIDE MATRIX
           </span>
-          <span className="hidden md:inline text-cyan-600">// AICR-BIOS v9.4</span>
+          <span className="hidden md:inline text-cyan-400 font-semibold">// AICR-BIOS v9.4</span>
         </div>
 
         <div className="flex items-center gap-4 text-[11px]">
-          <span className="hidden sm:inline text-cyan-500/70">
-            STORAGE: <strong className="text-gray-200">{getStorageUsageKb()}</strong> BELEGT
+          <span className="hidden sm:inline text-cyan-300 font-medium">
+            STORAGE: <strong className="text-gray-100">{getStorageUsageKb()}</strong> BELEGT
           </span>
           <button
             onClick={() => {
               audio.playUiClick();
               onClose();
             }}
-            className="px-2.5 py-1 bg-cyan-950/80 border border-cyan-600 hover:bg-cyan-500 hover:text-black transition-colors font-bold text-cyan-300 text-[11px]"
+            className="px-2.5 py-1 bg-cyan-950/80 border border-cyan-500 hover:bg-cyan-500 hover:text-black transition-colors font-bold text-cyan-200 text-[11px]"
           >
             [ESC / ZURÜCK]
           </button>
@@ -217,7 +217,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         {/* ZONE A: KATEGORIEN-NAVIGATION (3 SPALTEN) */}
         {/* ----------------------------------------------------------------------- */}
         <nav className="lg:col-span-3 flex flex-col gap-1.5 bg-[#090d14] border border-cyan-900/60 p-3 overflow-y-auto">
-          <div className="text-[10px] text-cyan-500 tracking-[0.25em] font-bold pb-2 border-b border-cyan-950 mb-1">
+          <div className="text-[10px] text-cyan-300 tracking-[0.25em] font-bold pb-2 border-b border-cyan-950 mb-1">
             SUB-SYSTEME // BIOS
           </div>
 
@@ -239,15 +239,15 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 }}
                 className={`text-left p-3 border transition-all duration-150 flex items-center justify-between cursor-pointer ${
                   isActive
-                    ? 'border-cyan-400 bg-cyan-950/60 text-cyan-300 shadow-[0_0_15px_rgba(0,255,170,0.2)]'
-                    : 'border-cyan-900/40 bg-black/30 hover:border-cyan-600 hover:bg-cyan-950/20 text-gray-300'
+                    ? 'border-cyan-400 bg-cyan-950/60 text-cyan-200 shadow-[0_0_15px_rgba(0,255,170,0.2)] font-bold'
+                    : 'border-cyan-900/40 bg-black/30 hover:border-cyan-600 hover:bg-cyan-950/20 text-slate-300 font-medium'
                 }`}
               >
                 <div>
                   <div className="text-xs font-bold tracking-wider">
                     [{tab.num}] {tab.title}
                   </div>
-                  <div className="text-[10px] text-gray-400 mt-0.5">{tab.sub}</div>
+                  <div className="text-[10px] text-slate-300 mt-0.5">{tab.sub}</div>
                 </div>
                 {isActive && <span className="text-cyan-400 font-bold">&gt;</span>}
               </button>
@@ -873,11 +873,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       {/* ========================================================================= */}
       {/* TERMINAL FOOTER: BEFEHLSLEISTE */}
       {/* ========================================================================= */}
-      <footer className="h-12 border-t border-cyan-900/80 bg-[#080c12] px-4 flex items-center justify-between text-xs text-cyan-400 shrink-0">
+      <footer className="h-12 border-t border-cyan-900/80 bg-[#080c12] px-4 flex items-center justify-between text-xs text-cyan-300 font-medium shrink-0">
         <div className="flex items-center gap-4 text-[11px]">
-          <span className="hidden sm:inline font-mono text-gray-400">[ESC] ZURÜCK ZUM HAUPTDECK</span>
-          <span className="hidden md:inline font-mono text-gray-400">[CTRL+R] AUF WERKS-WERTE</span>
-          <span className="hidden lg:inline font-mono text-gray-400">[CTRL+S] SPEICHERN</span>
+          <span className="hidden sm:inline font-mono text-cyan-300">[ESC] ZURÜCK ZUM HAUPTDECK</span>
+          <span className="hidden md:inline font-mono text-cyan-300">[CTRL+R] AUF WERKS-WERTE</span>
+          <span className="hidden lg:inline font-mono text-cyan-300">[CTRL+S] SPEICHERN</span>
         </div>
 
         <div className="flex gap-2">

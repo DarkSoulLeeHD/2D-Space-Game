@@ -239,17 +239,17 @@ export const NeuralLoginModal: React.FC<NeuralLoginModalProps> = ({
           <div className="space-y-4">
             <div className="p-3 bg-black/60 border border-cyan-900/80 space-y-2">
               <div className="flex justify-between items-center text-[11px]">
-                <span className="text-cyan-500 font-bold">STATUS:</span>
+                <span className="text-cyan-300 font-bold">STATUS:</span>
                 <span className="text-[#00FFAA] font-bold tracking-wider">
                   VERBUNDEN // RLS GESICHERT
                 </span>
               </div>
               <div className="flex justify-between items-center text-[11px]">
-                <span className="text-cyan-500 font-bold">E-MAIL:</span>
-                <span className="text-gray-200">{currentUser.email}</span>
+                <span className="text-cyan-300 font-bold">E-MAIL:</span>
+                <span className="text-gray-100 font-medium">{currentUser.email}</span>
               </div>
               <div className="flex justify-between items-center text-[11px]">
-                <span className="text-cyan-500 font-bold">CALLSIGN:</span>
+                <span className="text-cyan-300 font-bold">CALLSIGN:</span>
                 <span className="text-white font-bold">
                   {cloudProfile?.callsign || player.callsign}
                 </span>
@@ -259,19 +259,19 @@ export const NeuralLoginModal: React.FC<NeuralLoginModalProps> = ({
             {/* Cloud Progression Preview */}
             <div className="p-3 bg-cyan-950/30 border border-cyan-800/60 grid grid-cols-3 gap-2 text-center">
               <div>
-                <div className="text-[10px] text-cyan-400">CREDITS</div>
+                <div className="text-[10px] text-cyan-300 font-semibold">CREDITS</div>
                 <div className="text-sm font-bold text-gray-100">
                   {cloudProfile ? cloudProfile.credits : player.credits} AC
                 </div>
               </div>
               <div>
-                <div className="text-[10px] text-cyan-400">NANITEN</div>
+                <div className="text-[10px] text-cyan-300 font-semibold">NANITEN</div>
                 <div className="text-sm font-bold text-[#00FFAA]">
                   {cloudProfile ? cloudProfile.nanites : player.nanites} TN
                 </div>
               </div>
               <div>
-                <div className="text-[10px] text-cyan-400">CHRONO-KRISTALLE</div>
+                <div className="text-[10px] text-cyan-300 font-semibold">CHRONO-KRISTALLE</div>
                 <div className="text-sm font-bold text-amber-300">
                   {cloudProfile ? cloudProfile.chrono_crystals : player.chronoCrystals} CK
                 </div>
@@ -405,9 +405,9 @@ export const NeuralLoginModal: React.FC<NeuralLoginModalProps> = ({
         )}
 
         {/* Security & RLS Disclaimer */}
-        <div className="pt-2 border-t border-cyan-950 text-[10px] text-cyan-500/80 leading-relaxed flex items-center justify-between">
+        <div className="pt-2 border-t border-cyan-950 text-[10px] text-cyan-300 font-medium leading-relaxed flex items-center justify-between">
           <span>RLS: POSTGRESQL MULTI-TENANT GESICHERT</span>
-          <span className="text-[#00FFAA]">CWE-312 KONFORM</span>
+          <span className="text-[#00FFAA] font-bold">CWE-312 KONFORM</span>
         </div>
       </div>
     </div>

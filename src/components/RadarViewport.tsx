@@ -396,7 +396,7 @@ export const RadarViewport: React.FC<RadarViewportProps> = ({
         className="w-full h-full cursor-crosshair block"
       />
       {/* Sub-label in corner */}
-      <div className="absolute top-3 left-3 pointer-events-none text-[10px] font-mono text-cyan-500/80 bg-black/60 px-2 py-1 border border-cyan-900/60">
+      <div className="absolute top-3 left-3 pointer-events-none text-[10px] font-mono text-cyan-300 font-bold bg-black/70 px-2 py-1 border border-cyan-700/80">
         [RADAR: INTERAKTIV // KNOTEN ANWÄHLEN]
       </div>
     </div>
