@@ -41,15 +41,17 @@ export const TacticalGridCanvas: React.FC<TacticalGridCanvasProps> = ({
     const canvas = canvasRef.current;
     if (!canvas) return null;
     const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return null;
+
     const mx = clientX - rect.left;
     const my = clientY - rect.top;
 
-    const tileSize = Math.min(canvas.width, canvas.height) / 11;
-    const offsetX = (canvas.width - 10 * tileSize) / 2;
-    const offsetY = (canvas.height - 10 * tileSize) / 2;
+    const size = rect.width;
+    const tileSize = size / 11;
+    const offset = tileSize / 2;
 
-    const gx = Math.floor((mx - offsetX) / tileSize);
-    const gy = Math.floor((my - offsetY) / tileSize);
+    const gx = Math.floor((mx - offset) / tileSize);
+    const gy = Math.floor((my - offset) / tileSize);
 
     if (gx >= 0 && gx < 10 && gy >= 0 && gy < 10) {
       return { x: gx, y: gy };
@@ -86,20 +88,37 @@ export const TacticalGridCanvas: React.FC<TacticalGridCanvasProps> = ({
     let animId: number;
 
     const render = () => {
-      const w = (canvas.width = canvas.parentElement?.clientWidth || 700);
-      const h = (canvas.height = canvas.parentElement?.clientHeight || 600);
+      const container = canvas.parentElement;
+      const rect = container ? container.getBoundingClientRect() : canvas.getBoundingClientRect();
+      const maxSide = Math.min(rect.width, rect.height);
+      const displaySize = Math.max(260, Math.floor(maxSide - 16)) || 600;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const pixelSize = Math.round(displaySize * dpr);
+
+      if (canvas.width !== pixelSize || canvas.height !== pixelSize) {
+        canvas.width = pixelSize;
+        canvas.height = pixelSize;
+      }
+      if (canvas.style.width !== `${displaySize}px`) {
+        canvas.style.width = `${displaySize}px`;
+        canvas.style.height = `${displaySize}px`;
+      }
+
+      ctx.save();
+      ctx.scale(dpr, dpr);
+
+      const size = displaySize;
+      const tileSize = size / 11;
+      const offsetX = tileSize / 2;
+      const offsetY = tileSize / 2;
+      const now = performance.now() / 1000;
 
       // Clear dark phosphor background
       ctx.fillStyle = '#06080d';
-      ctx.fillRect(0, 0, w, h);
-
-      const tileSize = Math.min(w, h) / 11;
-      const offsetX = (w - 10 * tileSize) / 2;
-      const offsetY = (h - 10 * tileSize) / 2;
-      const now = performance.now() / 1000;
+      ctx.fillRect(0, 0, size, size);
 
       // 1. Grid Background & Grid Lines
-      ctx.strokeStyle = 'rgba(0, 255, 170, 0.08)';
+      ctx.strokeStyle = 'rgba(0, 255, 170, 0.12)';
       ctx.lineWidth = 1;
 
       for (let y = 0; y < 10; y++) {
@@ -211,7 +230,9 @@ export const TacticalGridCanvas: React.FC<TacticalGridCanvasProps> = ({
           const cy = offsetY + intent.targetTile.y * tileSize + tileSize / 2;
           ctx.fillStyle = '#E63946';
           ctx.font = 'bold 8px monospace';
-          ctx.fillText('[!] SEISMISCHER EINSCHLAG', cx - 45, cy - tileSize * 0.7);
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('[!] SEISMISCHER EINSCHLAG', cx, cy - tileSize * 0.7);
         }
 
         // 4.2 Angriffs-Intent (Roter Fadenkreuz-Vektor / Laserlinie)
@@ -244,7 +265,9 @@ export const TacticalGridCanvas: React.FC<TacticalGridCanvasProps> = ({
           // Target danger preview tag
           ctx.fillStyle = '#E63946';
           ctx.font = 'bold 8px monospace';
-          ctx.fillText(`ZIEL: -${intent.damagePreview} DMG`, tx - 22, ty + tileSize * 0.42);
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(`ZIEL: -${intent.damagePreview} DMG`, tx, ty + tileSize * 0.42);
           ctx.restore();
 
           if (intent.targetTile.x === playerPos.x && intent.targetTile.y === playerPos.y) {
@@ -263,7 +286,9 @@ export const TacticalGridCanvas: React.FC<TacticalGridCanvasProps> = ({
 
           ctx.fillStyle = '#38bdf8';
           ctx.font = 'bold 8px monospace';
-          ctx.fillText('[SCHILD +40]', ex - 22, ey - tileSize * 0.48);
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('[SCHILD +40]', ex, ey - tileSize * 0.48);
           ctx.restore();
         }
       });
@@ -271,7 +296,7 @@ export const TacticalGridCanvas: React.FC<TacticalGridCanvasProps> = ({
       // 5. Extraction Airlock (Wenn Sektor gesichert ist)
       if (isSectorCleared && exitTile) {
         const ax = offsetX + exitTile.x * tileSize + tileSize / 2;
-        const ay = offsetY + exitTile.y * tileSize + tileSize / 2;
+        const cyAirlock = offsetY + exitTile.y * tileSize + tileSize / 2;
 
         const pulse = 0.4 + 0.3 * Math.sin(now * 4);
         ctx.fillStyle = `rgba(0, 255, 170, ${pulse * 0.4})`;
@@ -285,12 +310,14 @@ export const TacticalGridCanvas: React.FC<TacticalGridCanvasProps> = ({
         ctx.strokeStyle = '#00FFAA';
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.arc(ax, ay, tileSize * 0.35 + Math.sin(now * 3) * 3, 0, Math.PI * 2);
+        ctx.arc(ax, cyAirlock, tileSize * 0.35 + Math.sin(now * 3) * 3, 0, Math.PI * 2);
         ctx.stroke();
 
         ctx.fillStyle = '#00FFAA';
         ctx.font = 'bold 8px monospace';
-        ctx.fillText('SCHLEUSE', ax - 18, ay + tileSize * 0.45);
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('SCHLEUSE', ax, cyAirlock + tileSize * 0.45);
       }
 
       // 6. Drone Unit: Scarab-IV (Begleitdrohne)
@@ -311,12 +338,15 @@ export const TacticalGridCanvas: React.FC<TacticalGridCanvasProps> = ({
 
         ctx.fillStyle = '#00FFAA';
         ctx.font = '8px monospace';
-        ctx.fillText('SCARAB', dx - 14, dy + tileSize * 0.35);
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('SCARAB', dx, dy + tileSize * 0.38);
       }
 
       // 7. Render Entities (Player & Enemies)
       entities.forEach((ent) => {
         if (ent.hp <= 0) return;
+        if (ent.isDrone) return; // Begleitdrohne wurde bereits in Sektion 6 gerendert
         const ex = offsetX + ent.x * tileSize + tileSize / 2;
         const ey = offsetY + ent.y * tileSize + tileSize / 2;
 
@@ -339,18 +369,24 @@ export const TacticalGridCanvas: React.FC<TacticalGridCanvasProps> = ({
           // Label
           ctx.fillStyle = '#00FFAA';
           ctx.font = 'bold 9px monospace';
-          ctx.fillText('VANCE', ex - 14, ey - tileSize * 0.38);
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('VANCE', ex, ey - tileSize * 0.38);
 
           // Danger Warning if targeted by enemy
           if (totalIncomingToVance > 0) {
-            const tagY = ey - tileSize * 0.65;
-            ctx.fillStyle = 'rgba(230, 57, 70, 0.9)';
-            ctx.fillRect(ex - 42, tagY - 9, 84, 13);
-            ctx.fillStyle = '#ffffff';
+            const tagY = ey - tileSize * 0.62;
+            const tagText = `! GEFÄHRDET: ${totalIncomingToVance} DMG`;
             ctx.font = 'bold 8px monospace';
-            ctx.fillText(`! GEFÄHRDET: ${totalIncomingToVance} DMG`, ex - 40, tagY);
+            const tw = ctx.measureText(tagText).width + 8;
+            ctx.fillStyle = 'rgba(230, 57, 70, 0.9)';
+            ctx.fillRect(ex - tw / 2, tagY - 7, tw, 13);
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(tagText, ex, tagY);
           }
-        } else if (!ent.isDrone) {
+        } else {
           // Enemy Entity
           const isBoss = ent.archetype === 'BOSS_NILUS' || ent.isBoss;
           ctx.fillStyle = ent.color || (isBoss ? '#E63946' : '#E07A5F');
@@ -365,7 +401,7 @@ export const TacticalGridCanvas: React.FC<TacticalGridCanvasProps> = ({
             // Praetor Mech Octagon
             ctx.rect(ex - tileSize * 0.32, ey - tileSize * 0.32, tileSize * 0.64, tileSize * 0.64);
           } else {
-            // Creeper triangle
+            // Creeper
             ctx.arc(ex, ey, tileSize * 0.3, 0, Math.PI * 2);
           }
           ctx.fill();
@@ -380,7 +416,7 @@ export const TacticalGridCanvas: React.FC<TacticalGridCanvasProps> = ({
           }
 
           // Health bar above enemy
-          const barW = tileSize * 0.85;
+          const barW = tileSize * 0.75;
           const barH = isBoss ? 5 : 3;
           const barX = ex - barW / 2;
           const barY = ey - tileSize * 0.46;
@@ -388,19 +424,21 @@ export const TacticalGridCanvas: React.FC<TacticalGridCanvasProps> = ({
           ctx.fillStyle = '#1A202C';
           ctx.fillRect(barX, barY, barW, barH);
           ctx.fillStyle = isBoss ? '#E63946' : '#E07A5F';
-          ctx.fillRect(barX, barY, barW * (ent.hp / ent.maxHp), barH);
+          ctx.fillRect(barX, barY, Math.max(0, barW * (ent.hp / ent.maxHp)), barH);
 
           // Shield bar if shielded
           if (ent.shield > 0) {
             ctx.fillStyle = '#38bdf8';
-            ctx.fillRect(barX, barY - 2, barW * (ent.shield / ent.maxShield), 2);
+            ctx.fillRect(barX, barY - 3, Math.max(0, barW * (ent.shield / (ent.maxShield || 1))), 2);
           }
 
           // Name & Phase label
           ctx.fillStyle = isBoss ? '#E63946' : '#E07A5F';
           ctx.font = '8px monospace';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
           const bossTag = isBoss && ent.bossPhase ? ` [PH${ent.bossPhase}]` : '';
-          ctx.fillText(`${ent.name.slice(0, 10)}${bossTag}`, ex - 22, ey + tileSize * 0.44);
+          ctx.fillText(`${ent.name.slice(0, 10)}${bossTag}`, ex, ey + tileSize * 0.44);
         }
       });
 
@@ -436,7 +474,9 @@ export const TacticalGridCanvas: React.FC<TacticalGridCanvasProps> = ({
 
         ctx.fillStyle = '#00FFAA';
         ctx.font = '8px monospace';
-        ctx.fillText(`ZIEL: (${targetTile.x}, ${targetTile.y})`, tx - 22, ty + reticleSize + 10);
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`ZIEL: (${targetTile.x}, ${targetTile.y})`, tx, ty + reticleSize + 10);
       }
 
       // 9. Render Projectile Tracer Lines
@@ -481,21 +521,26 @@ export const TacticalGridCanvas: React.FC<TacticalGridCanvasProps> = ({
           ctx.font = 'bold 13px monospace';
           ctx.shadowColor = dp.color;
           ctx.shadowBlur = 8;
-          ctx.fillText(dp.text, px - 20, py);
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(dp.text, px, py);
           ctx.restore();
         });
       }
 
       // 11. Coordinate Axis Labels (0-9)
-      ctx.fillStyle = 'rgba(0, 255, 170, 0.4)';
+      ctx.fillStyle = 'rgba(0, 255, 170, 0.45)';
       ctx.font = '8px monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
       for (let i = 0; i < 10; i++) {
         // X-axis top
-        ctx.fillText(i.toString(), offsetX + i * tileSize + tileSize / 2 - 3, offsetY - 6);
+        ctx.fillText(i.toString(), offsetX + i * tileSize + tileSize / 2, offsetY - 8);
         // Y-axis left
-        ctx.fillText(i.toString(), offsetX - 12, offsetY + i * tileSize + tileSize / 2 + 3);
+        ctx.fillText(i.toString(), offsetX - 8, offsetY + i * tileSize + tileSize / 2);
       }
 
+      ctx.restore();
       animId = requestAnimationFrame(render);
     };
 
@@ -516,12 +561,12 @@ export const TacticalGridCanvas: React.FC<TacticalGridCanvasProps> = ({
   ]);
 
   return (
-    <div className="relative w-full h-full flex items-center justify-center bg-[#070a0e] select-none overflow-hidden">
+    <div className="relative w-full h-full flex items-center justify-center bg-[#070a0e] select-none overflow-hidden p-2">
       <canvas
         ref={canvasRef}
         onPointerMove={handlePointerMove}
         onPointerDown={handlePointerDown}
-        className="cursor-crosshair w-full h-full max-w-[750px] max-h-[750px]"
+        className="cursor-crosshair block shadow-[0_0_30px_rgba(0,0,0,0.85)] border border-cyan-950/80 rounded-sm"
       />
     </div>
   );
