@@ -19,9 +19,6 @@ export async function fetchBossPhaseTaunt(
 ): Promise<string> {
   const apiKey =
     explicitApiKey ||
-    (typeof window !== 'undefined'
-      ? localStorage.getItem('GEMINI_API_KEY_v1') || ''
-      : '') ||
     process.env.GEMINI_API_KEY ||
     '';
 

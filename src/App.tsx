@@ -141,6 +141,9 @@ export default function App() {
           onOpenQaModal={() => {
             setIsQaModalOpen(true);
           }}
+          onOpenTelemetry={() => {
+            setIsTelemetryOpen(true);
+          }}
           onStartDeployment={(sectorId) => {
             setSelectedSectorId(sectorId);
             setCurrentView('OPERATIONS');

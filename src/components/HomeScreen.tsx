@@ -11,6 +11,7 @@ interface HomeScreenProps {
   onOpenEconomy?: () => void;
   onOpenEndgame?: () => void;
   onOpenQaModal?: () => void;
+  onOpenTelemetry?: () => void;
   onStartDeployment?: (sectorId: number) => void;
 }
 
@@ -23,6 +24,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenEconomy,
   onOpenEndgame,
   onOpenQaModal,
+  onOpenTelemetry,
   onStartDeployment,
 }) => {
   const { player, updatePlayer, resetSave, exportSave } = useGameStorage();
@@ -213,7 +215,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {/* ========================================================================= */}
       <header className="relative z-30 h-14 px-4 sm:px-6 flex items-center justify-between border-b border-cyan-900/60 bg-[#070a0e]/95 text-xs text-cyan-400">
         <div className="flex items-center gap-3 sm:gap-6 truncate">
-          <div className="flex items-center gap-2 font-bold tracking-widest text-cyan-300">
+          <div
+            onClick={(e) => {
+              if (e.detail >= 3 && onOpenTelemetry) {
+                onOpenTelemetry();
+              }
+            }}
+            title="Dreifachklick oder Shift+D für Engine-Telemetrie"
+            className="flex items-center gap-2 font-bold tracking-widest text-cyan-300 cursor-pointer hover:text-white transition-colors"
+          >
             <span className="w-2.5 h-2.5 rounded-full bg-[#00FFAA] shadow-[0_0_8px_#00FFAA]" />
             ASTRAEA MODEL-7 TERMINAL
           </div>

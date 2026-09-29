@@ -59,15 +59,22 @@ export class SettingsService {
   public static loadSettings(): ITerminalSettings {
     if (typeof window === 'undefined') return DEFAULT_SETTINGS;
     try {
+      // Remove any legacy insecure cleartext key if present
+      try {
+        localStorage.removeItem(GEMINI_KEY_STORAGE);
+        localStorage.removeItem('GEMINI_API_KEY_v1');
+      } catch {
+        // Ignore storage access errors
+      }
+
       const raw = localStorage.getItem(SETTINGS_KEY);
-      const savedKey = localStorage.getItem(GEMINI_KEY_STORAGE) || '';
 
       if (!raw) {
         return {
           ...DEFAULT_SETTINGS,
           aiCore: {
             ...DEFAULT_SETTINGS.aiCore,
-            apiKey: savedKey,
+            apiKey: '',
           },
         };
       }
@@ -82,7 +89,7 @@ export class SettingsService {
         aiCore: {
           ...DEFAULT_SETTINGS.aiCore,
           ...parsed.aiCore,
-          apiKey: savedKey || parsed.aiCore?.apiKey || '',
+          apiKey: '',
         },
         a11y: { ...DEFAULT_SETTINGS.a11y, ...parsed.a11y },
       };
@@ -95,12 +102,17 @@ export class SettingsService {
   public static saveSettings(settings: ITerminalSettings): boolean {
     if (typeof window === 'undefined') return false;
     try {
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-
-      // Separate storage for GEMINI_API_KEY as per spec
-      if (settings.aiCore.apiKey !== undefined) {
-        localStorage.setItem(GEMINI_KEY_STORAGE, settings.aiCore.apiKey.trim());
-      }
+      // Sanitize settings: Never persist sensitive raw API key in clear text to localStorage (CWE-312)
+      const settingsToPersist: ITerminalSettings = {
+        ...settings,
+        aiCore: {
+          ...settings.aiCore,
+          apiKey: '',
+        },
+      };
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settingsToPersist));
+      localStorage.removeItem(GEMINI_KEY_STORAGE);
+      localStorage.removeItem('GEMINI_API_KEY_v1');
 
       // Live-apply audio settings to ProceduralAudioEngine
       const audio = ProceduralAudioEngine.getInstance();
