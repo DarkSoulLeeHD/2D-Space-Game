@@ -1,6 +1,7 @@
 import { ITerminalSettings } from '../types/settings';
 import { ProceduralAudioEngine } from './audioEngine';
 import { TerminalSpeechSynthesizer } from './speechService';
+import { CloudPersistenceService } from './supabaseClient';
 
 const SETTINGS_KEY = 'CHRONO_SETTINGS_v1';
 const GEMINI_KEY_STORAGE = 'GEMINI_API_KEY';
@@ -80,6 +81,7 @@ export class SettingsService {
       }
 
       const parsed = JSON.parse(raw);
+      const activeCachedKey = CloudPersistenceService.getCachedApiKey();
       return {
         ...DEFAULT_SETTINGS,
         ...parsed,
@@ -89,7 +91,7 @@ export class SettingsService {
         aiCore: {
           ...DEFAULT_SETTINGS.aiCore,
           ...parsed.aiCore,
-          apiKey: '',
+          apiKey: activeCachedKey || '',
         },
         a11y: { ...DEFAULT_SETTINGS.a11y, ...parsed.a11y },
       };
@@ -102,6 +104,19 @@ export class SettingsService {
   public static saveSettings(settings: ITerminalSettings): boolean {
     if (typeof window === 'undefined') return false;
     try {
+      // If user configured an API key in UI, update in-memory cache and Supabase cloud profile if logged in
+      if (settings.aiCore?.apiKey !== undefined) {
+        const cleanedKey = settings.aiCore.apiKey.trim();
+        CloudPersistenceService.setCachedApiKey(cleanedKey);
+
+        const currentUser = CloudPersistenceService.getCurrentUser();
+        if (currentUser) {
+          CloudPersistenceService.syncApiKey(currentUser.id, cleanedKey).catch((err) => {
+            console.warn('[SettingsService] Failed to sync API key to Supabase:', err);
+          });
+        }
+      }
+
       // Sanitize settings: Never persist sensitive raw API key in clear text to localStorage (CWE-312)
       const settingsToPersist: ITerminalSettings = {
         ...settings,

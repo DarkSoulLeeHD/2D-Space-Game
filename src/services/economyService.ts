@@ -9,6 +9,7 @@ import {
   ItemRarity,
   ICrateDrop,
 } from '../types/economy';
+import { CloudPersistenceService } from './supabaseClient';
 
 const WALLET_STORAGE_KEY = 'chrono_wallet_v13';
 const RESEARCH_STORAGE_KEY = 'chrono_research_v13';
@@ -692,6 +693,18 @@ export class EconomyService {
   public static saveWallet(wallet: IPlayerWallet): void {
     try {
       localStorage.setItem(WALLET_STORAGE_KEY, JSON.stringify(wallet));
+
+      const currentUser = CloudPersistenceService.getCurrentUser();
+      if (currentUser) {
+        CloudPersistenceService.syncProgression(currentUser.id, {
+          credits: wallet.credits,
+          nanites: wallet.nanites,
+          chrono_crystals: wallet.chronoCrystals,
+          high_score: wallet.level,
+        }).catch((err) => {
+          console.warn('[EconomyService] Failed to sync wallet to Supabase:', err);
+        });
+      }
     } catch {
       // Ignore
     }

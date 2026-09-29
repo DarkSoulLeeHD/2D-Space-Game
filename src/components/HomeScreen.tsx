@@ -3,6 +3,8 @@ import { ISectorNode } from '../types/game';
 import { useGameStorage, getStorageUsageKb } from '../services/storageService';
 import { ProceduralAudioEngine } from '../services/audioEngine';
 import { RadarViewport, SECTOR_NODES } from './RadarViewport';
+import { supabase, CloudPersistenceService, ICloudProfile } from '../services/supabaseClient';
+import { NeuralLoginModal } from './NeuralLoginModal';
 
 interface HomeScreenProps {
   onOpenSettings: () => void;
@@ -27,12 +29,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenTelemetry,
   onStartDeployment,
 }) => {
-  const { player, updatePlayer, resetSave, exportSave } = useGameStorage();
+  const { player, updatePlayer, loadCloudProfile, resetSave, exportSave } = useGameStorage();
   const [selectedSector, setSelectedSector] = useState<ISectorNode>(() => {
     return SECTOR_NODES.find((s) => s.id === 4) || SECTOR_NODES[0];
   });
   const [focusedIndex, setFocusedIndex] = useState<number>(0);
   const [activeModal, setActiveModal] = useState<ActiveModal>('NONE');
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [cloudUserEmail, setCloudUserEmail] = useState<string | null>(null);
+  const [cloudCallsign, setCloudCallsign] = useState<string>('');
   const [isTransitioningSettings, setIsTransitioningSettings] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
@@ -43,6 +48,43 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     setNotification(msg);
     setTimeout(() => setNotification(null), 3000);
   };
+
+  // Check Supabase session & cloud profile on mount and subscribe to changes
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session?.user) {
+        setCloudUserEmail(data.session.user.email || 'USER');
+        CloudPersistenceService.setCurrentUser(data.session.user);
+        CloudPersistenceService.fetchProfile(data.session.user.id).then((profile) => {
+          if (profile) {
+            setCloudCallsign(profile.callsign || 'Vance');
+            loadCloudProfile(profile);
+          }
+        });
+      }
+    });
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setCloudUserEmail(session.user.email || 'USER');
+        CloudPersistenceService.setCurrentUser(session.user);
+        CloudPersistenceService.fetchProfile(session.user.id).then((profile) => {
+          if (profile) {
+            setCloudCallsign(profile.callsign || 'Vance');
+            loadCloudProfile(profile);
+          }
+        });
+      } else {
+        setCloudUserEmail(null);
+        setCloudCallsign('');
+        CloudPersistenceService.setCurrentUser(null);
+      }
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
 
   // Handle Command selection
   const handleExecuteCommand = useCallback(
@@ -93,6 +135,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // If modal is active, let Escape close it
+      if (isAuthModalOpen) {
+        if (e.key === 'Escape') {
+          setIsAuthModalOpen(false);
+          audio.playUiClick();
+        }
+        return;
+      }
+
       if (activeModal !== 'NONE') {
         if (e.key === 'Escape') {
           setActiveModal('NONE');
@@ -247,6 +297,27 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <span className="text-cyan-500/70">RIG:</span>
             <span className="font-bold text-cyan-300">{player.rigIntegrity}%</span>
           </div>
+
+          {/* Cloud Sync / Neural Login Status Button */}
+          <button
+            onClick={() => {
+              audio.playSelectClick();
+              setIsAuthModalOpen(true);
+            }}
+            className={`px-2.5 py-1 border font-bold text-[10px] tracking-wider flex items-center gap-1.5 cursor-pointer transition-colors ${
+              cloudUserEmail
+                ? 'bg-cyan-950/70 border-cyan-400 text-[#00FFAA] shadow-[0_0_10px_rgba(0,255,170,0.3)]'
+                : 'bg-black/60 border-cyan-800/80 text-cyan-400/80 hover:text-cyan-300 hover:border-cyan-500'
+            }`}
+            title={cloudUserEmail ? `Neural-Link aktiv: ${cloudUserEmail}` : 'Neural-Login & Cloud-Sync'}
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                cloudUserEmail ? 'bg-[#00FFAA] shadow-[0_0_6px_#00FFAA]' : 'bg-gray-500'
+              }`}
+            />
+            <span>{cloudUserEmail ? `[CLOUD: ${(cloudCallsign || 'VANCE').toUpperCase()}]` : '[CLOUD-SYNC]'}</span>
+          </button>
 
           {onOpenEconomy && (
             <button
@@ -634,6 +705,18 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </div>
         </div>
       )}
+
+      {/* Neural Login & Cloud Sync Modal */}
+      <NeuralLoginModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        player={player}
+        onProfileLoaded={(profile) => {
+          loadCloudProfile(profile);
+          setCloudCallsign(profile.callsign || 'Vance');
+          showToast(`CLOUD-PROFIL AKTIV // ${profile.callsign.toUpperCase()}`);
+        }}
+      />
 
       {/* ========================================================================= */}
       {/* BOTTOM-DOCK: HARDWARE-STATUS & PROFIL-VALIDIERUNG */}

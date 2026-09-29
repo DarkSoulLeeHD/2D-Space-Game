@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { IPlayerState, IGameSaveData } from '../types/game';
+import { CloudPersistenceService, ICloudProfile } from './supabaseClient';
 
 const SAVE_KEY = 'CHRONO_SAVE_v1';
 
@@ -63,11 +64,43 @@ export function saveGameData(data: Partial<IGameSaveData>): boolean {
       timestamp: Date.now(),
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(updated));
+
+    // Asynchronously push progression to Supabase if logged in
+    const currentUser = CloudPersistenceService.getCurrentUser();
+    if (currentUser && updated.player) {
+      CloudPersistenceService.syncProgression(currentUser.id, {
+        callsign: updated.player.callsign,
+        credits: updated.player.credits,
+        nanites: updated.player.nanites,
+        chrono_crystals: updated.player.chronoCrystals,
+        high_score: updated.player.level,
+      }).catch((err) => {
+        console.warn('[StorageService] Background cloud sync error:', err);
+      });
+    }
+
     return true;
   } catch (err) {
     console.error('LocalStorage Speicherkapazität überschritten oder blockiert:', err);
     return false;
   }
+}
+
+export function syncCloudProfileToSave(profile: ICloudProfile): IGameSaveData {
+  const current = loadGameSave();
+  const updated: IGameSaveData = {
+    ...current,
+    player: {
+      ...current.player,
+      callsign: profile.callsign || current.player.callsign,
+      credits: profile.credits ?? current.player.credits,
+      nanites: profile.nanites ?? current.player.nanites,
+      chronoCrystals: profile.chrono_crystals ?? current.player.chronoCrystals,
+    },
+    timestamp: Date.now(),
+  };
+  saveGameData(updated);
+  return updated;
 }
 
 export function resetGameSave(): IGameSaveData {
@@ -127,10 +160,16 @@ export function useGameStorage() {
     return fresh;
   };
 
+  const loadCloudProfile = (profile: ICloudProfile) => {
+    const synced = syncCloudProfileToSave(profile);
+    setSaveData(synced);
+  };
+
   return {
     saveData,
     player: saveData.player,
     updatePlayer,
+    loadCloudProfile,
     resetSave: handleReset,
     exportSave: () => exportSaveAsJson(saveData),
   };
