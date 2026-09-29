@@ -5,6 +5,7 @@ import { ProceduralAudioEngine } from '../services/audioEngine';
 import { RadarViewport, SECTOR_NODES } from './RadarViewport';
 import { supabase, CloudPersistenceService, ICloudProfile } from '../services/supabaseClient';
 import { NeuralLoginModal } from './NeuralLoginModal';
+import { TutorialModal } from './TutorialModal';
 
 interface HomeScreenProps {
   onOpenSettings: () => void;
@@ -36,6 +37,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const [focusedIndex, setFocusedIndex] = useState<number>(0);
   const [activeModal, setActiveModal] = useState<ActiveModal>('NONE');
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
   const [cloudUserEmail, setCloudUserEmail] = useState<string | null>(null);
   const [cloudCallsign, setCloudCallsign] = useState<string>('');
   const [isTransitioningSettings, setIsTransitioningSettings] = useState(false);
@@ -131,10 +133,18 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     [audio, onOpenSettings, onOpenEconomy, onOpenEndgame]
   );
 
-  // Keyboard Navigation: [1-7], [B], [N], Arrow Up/Down, Enter/Space, M
+  // Keyboard Navigation: [1-7], [B], [N], [T], Arrow Up/Down, Enter/Space, M
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // If modal is active, let Escape close it
+      if (isTutorialOpen) {
+        if (e.key === 'Escape') {
+          setIsTutorialOpen(false);
+          audio.playUiClick();
+        }
+        return;
+      }
+
       if (isAuthModalOpen) {
         if (e.key === 'Escape') {
           setIsAuthModalOpen(false);
@@ -158,6 +168,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       else if (e.key === '5') handleExecuteCommand(5);
       else if (e.key === '6' || e.key.toLowerCase() === 'b') handleExecuteCommand(6);
       else if (e.key === '7' || e.key.toLowerCase() === 'n') handleExecuteCommand(7);
+      else if (e.key.toLowerCase() === 't') {
+        audio.playSelectClick();
+        setIsTutorialOpen(true);
+      }
       else if (e.key === 'ArrowUp') {
         e.preventDefault();
         setFocusedIndex((prev) => {
@@ -346,6 +360,18 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               <span>[QA-AUDIT]</span>
             </button>
           )}
+
+          {/* Prominent Tutorial / Operative Manual Button */}
+          <button
+            onClick={() => {
+              audio.playSelectClick();
+              setIsTutorialOpen(true);
+            }}
+            title="Taktisches Handbuch & Tutorial öffnen (Taste T)"
+            className="px-3 py-1 bg-cyan-950/80 border-2 border-[#00FFAA] text-[#00FFAA] font-extrabold hover:bg-[#00FFAA] hover:text-black transition-all cursor-pointer text-[10px] tracking-wider flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,255,170,0.35)] animate-pulse"
+          >
+            <span>[T] OPERATIVE MANUAL // VOLLSTÄNDIGES TUTORIAL</span>
+          </button>
         </div>
       </header>
 
@@ -423,6 +449,21 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 TASTEN [1-5] ODER PFEILE
               </span>
             </div>
+
+            {/* Quick Tutorial Callout Banner */}
+            <button
+              onClick={() => {
+                audio.playSelectClick();
+                setIsTutorialOpen(true);
+              }}
+              className="w-full mb-3 p-2.5 bg-[#00FFAA]/10 border-2 border-[#00FFAA]/70 hover:bg-[#00FFAA] hover:text-black text-[#00FFAA] transition-all font-mono font-bold text-xs tracking-wider flex items-center justify-between cursor-pointer shadow-[0_0_15px_rgba(0,255,170,0.25)]"
+            >
+              <span className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#00FFAA] animate-ping" />
+                <span>[T] OPERATIVE MANUAL // VOLLSTÄNDIGES TUTORIAL</span>
+              </span>
+              <span className="text-[10px] uppercase font-extrabold underline">[ÖFFNEN] &gt;</span>
+            </button>
 
             {/* Menu Tiles */}
             <div className="space-y-3">
