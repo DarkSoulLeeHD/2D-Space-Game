@@ -71,15 +71,14 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
     if (!isOpen) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        audio.playUiClick();
-        onClose();
-        return;
-      }
-
-      // In MANUAL mode, allow left/right arrows or A/D to cycle chapters
+      // In MANUAL mode, allow left/right arrows or A/D to cycle chapters, and Escape to close
       if (viewMode === 'MANUAL') {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          audio.playUiClick();
+          onClose();
+          return;
+        }
         if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
           e.preventDefault();
           handleNextChapter();

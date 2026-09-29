@@ -129,7 +129,6 @@ export const InteractiveTutorialSimulator: React.FC<InteractiveTutorialSimulator
   const [vanceHp, setVanceHp] = useState<number>(85);
   const [vanceShield, setVanceShield] = useState<number>(125);
   const [gridEntropy, setGridEntropy] = useState<number>(10);
-  const [selectedAction, setSelectedAction] = useState<'MOVE' | 'DASH' | 'DRONE' | 'STIM'>('MOVE');
 
   // 6x6 Mini Grid tiles:
   // . = Floor, H = Half Cover, W = Full Wall, R = Radiation
@@ -161,6 +160,7 @@ export const InteractiveTutorialSimulator: React.FC<InteractiveTutorialSimulator
   const [parryResult, setParryResult] = useState<'IDLE' | 'PERFECT' | 'MISSED'>('IDLE');
   const [parryCount, setParryCount] = useState<number>(0);
   const parryProgressRef = useRef<number>(0);
+  const parryRunningRef = useRef<boolean>(false);
   const parryAnimRef = useRef<number>(0); // tracks RAF id for cleanup
 
   // ===========================================================================
@@ -175,6 +175,21 @@ export const InteractiveTutorialSimulator: React.FC<InteractiveTutorialSimulator
   // ===========================================================================
   const [pastSwitchActive, setPastSwitchActive] = useState<boolean>(false);
   const [futureDroneClaimed, setFutureDroneClaimed] = useState<boolean>(false);
+
+  // Forward declarations for keyboard actions
+  const triggerParryHitRef = useRef<() => void>(() => {});
+  const startParryTrainingRef = useRef<() => void>(() => {});
+  const handleGridMoveRef = useRef<(tx: number, ty: number) => void>(() => {});
+  const handleGridDashRef = useRef<() => void>(() => {});
+  const handleGridDroneShieldRef = useRef<() => void>(() => {});
+  const handleGridStimRef = useRef<() => void>(() => {});
+  const handleResetGridRef = useRef<() => void>(() => {});
+  const handleAttackDummyRef = useRef<() => void>(() => {});
+  const handleReloadCombatRef = useRef<() => void>(() => {});
+  const handleEndCombatTurnRef = useRef<() => void>(() => {});
+  const openMysteryCrateRef = useRef<() => void>(() => {});
+  const togglePastSwitchRef = useRef<() => void>(() => {});
+  const claimFutureCrystalRef = useRef<() => void>(() => {});
 
   // Global keydown handler inside the interactive simulator
   useEffect(() => {
@@ -203,11 +218,77 @@ export const InteractiveTutorialSimulator: React.FC<InteractiveTutorialSimulator
         }
       }
 
+      // Drill 3: Tactical Grid Movement & Abilities
+      if (activeDrill === 3) {
+        if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+          e.preventDefault();
+          handleGridMoveRef.current(vancePos.x, Math.max(0, vancePos.y - 1));
+        } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+          e.preventDefault();
+          handleGridMoveRef.current(vancePos.x, Math.min(5, vancePos.y + 1));
+        } else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+          e.preventDefault();
+          handleGridMoveRef.current(Math.max(0, vancePos.x - 1), vancePos.y);
+        } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+          e.preventDefault();
+          handleGridMoveRef.current(Math.min(5, vancePos.x + 1), vancePos.y);
+        } else if (e.key === '3') {
+          e.preventDefault();
+          handleGridDashRef.current();
+        } else if (e.key === '4') {
+          e.preventDefault();
+          handleGridDroneShieldRef.current();
+        } else if (e.key === 'h' || e.key === 'H') {
+          e.preventDefault();
+          handleGridStimRef.current();
+        } else if (e.key === 'r' || e.key === 'R') {
+          e.preventDefault();
+          handleResetGridRef.current();
+        }
+      }
+
+      // Drill 4: Targeting & Combat Actions
+      if (activeDrill === 4) {
+        if (e.key === '2') {
+          e.preventDefault();
+          handleAttackDummyRef.current();
+        } else if (e.key === 'r' || e.key === 'R') {
+          e.preventDefault();
+          handleReloadCombatRef.current();
+        } else if (e.key === 'e' || e.key === 'E') {
+          e.preventDefault();
+          handleEndCombatTurnRef.current();
+        }
+      }
+
       // QTE Space / Enter trigger for Drill 5
-      if (activeDrill === 5 && parryRunning) {
+      if (activeDrill === 5) {
         if (e.key === ' ' || e.key === 'Enter') {
           e.preventDefault();
-          triggerParryHit();
+          if (parryRunningRef.current) {
+            triggerParryHitRef.current();
+          } else {
+            startParryTrainingRef.current();
+          }
+        }
+      }
+
+      // Drill 6: Mystery Crate
+      if (activeDrill === 6) {
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          openMysteryCrateRef.current();
+        }
+      }
+
+      // Drill 7: Causality
+      if (activeDrill === 7) {
+        if (e.key === '1') {
+          e.preventDefault();
+          togglePastSwitchRef.current();
+        } else if (e.key === '2' || e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          claimFutureCrystalRef.current();
         }
       }
     };
@@ -217,7 +298,7 @@ export const InteractiveTutorialSimulator: React.FC<InteractiveTutorialSimulator
       window.removeEventListener('keydown', handleKeyDown);
       cancelAnimationFrame(parryAnimRef.current); // stop parry loop on drill switch/unmount
     };
-  }, [activeDrill, parryRunning, audio, onCloseModal, markDrillCompleted]);
+  }, [activeDrill, audio, onCloseModal, markDrillCompleted, vancePos.x, vancePos.y]);
 
   // ===========================================================================
   // DRILL 2 LOGIC: WEAPON OVERCLOCKING & TEST FIRING
@@ -341,21 +422,32 @@ export const InteractiveTutorialSimulator: React.FC<InteractiveTutorialSimulator
     setCombatLogs((logs) => ['>> Magazin auf 36 Schuss nachgeladen [-1 AP].', ...logs]);
   };
 
+  const handleEndCombatTurn = () => {
+    audio.playSelectClick();
+    setCombatAp(6);
+    setCombatLogs((logs) => [
+      '>> RUNDE BEENDET: 6 AP wiederhergestellt. Kriecher verharrt in Lauerstellung.',
+      ...logs,
+    ]);
+  };
+
   const handleResetCombat = () => {
     audio.playUiClick();
     setDummyEnemyHp(50);
     setCombatAp(6);
     setAmmoCount(30);
+    setCombatLogs(['>> DRILL INITIALISIERT: Feindlicher Chrono-Kriecher telegrafiert Angriff.']);
   };
 
   // ===========================================================================
   // DRILL 5 LOGIC: CHRONO-PARADE QTE
   // ===========================================================================
   const startParryTraining = () => {
-    if (parryRunning) return;
+    if (parryRunningRef.current) return;
     cancelAnimationFrame(parryAnimRef.current); // cancel any stale frame
     setParryResult('IDLE');
     setParryRunning(true);
+    parryRunningRef.current = true;
     setParryProgress(0);
     parryProgressRef.current = 0;
     audio.playHoverPing();
@@ -364,12 +456,14 @@ export const InteractiveTutorialSimulator: React.FC<InteractiveTutorialSimulator
     const duration = 1200; // 1,2s Timing-Band
 
     const frame = (now: number) => {
+      if (!parryRunningRef.current) return;
       const elapsed = now - startTime;
       const prog = Math.min(100, (elapsed / duration) * 100);
       parryProgressRef.current = prog;
       setParryProgress(prog);
 
       if (prog >= 100) {
+        parryRunningRef.current = false;
         setParryRunning(false);
         setParryResult('MISSED');
         audio.playShieldDeflect();
@@ -382,7 +476,9 @@ export const InteractiveTutorialSimulator: React.FC<InteractiveTutorialSimulator
   };
 
   const triggerParryHit = () => {
-    if (!parryRunning) return;
+    if (!parryRunningRef.current) return;
+    cancelAnimationFrame(parryAnimRef.current);
+    parryRunningRef.current = false;
     setParryRunning(false);
     const p = parryProgressRef.current;
 
@@ -457,6 +553,27 @@ export const InteractiveTutorialSimulator: React.FC<InteractiveTutorialSimulator
     setFutureDroneClaimed(true);
     markDrillCompleted(7);
   };
+
+  const handleResetCausality = () => {
+    audio.playUiClick();
+    setPastSwitchActive(false);
+    setFutureDroneClaimed(false);
+  };
+
+  // Sync ref pointers for global keyboard listener
+  handleGridMoveRef.current = handleGridMove;
+  handleGridDashRef.current = handleGridDash;
+  handleGridDroneShieldRef.current = handleGridDroneShield;
+  handleGridStimRef.current = handleGridStim;
+  handleResetGridRef.current = handleResetGrid;
+  handleAttackDummyRef.current = handleAttackDummy;
+  handleReloadCombatRef.current = handleReloadCombat;
+  handleEndCombatTurnRef.current = handleEndCombatTurn;
+  startParryTrainingRef.current = startParryTraining;
+  triggerParryHitRef.current = triggerParryHit;
+  openMysteryCrateRef.current = openMysteryCrate;
+  togglePastSwitchRef.current = togglePastSwitch;
+  claimFutureCrystalRef.current = claimFutureCrystal;
 
   const handleSelectDrill = (drillId: number) => {
     audio.playSelectClick();
@@ -745,7 +862,15 @@ export const InteractiveTutorialSimulator: React.FC<InteractiveTutorialSimulator
                   </div>
                 </div>
 
-                <div className="flex gap-2 w-full sm:w-auto">
+                <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                  {simulatedNanites < 40 && (
+                    <button
+                      onClick={() => setSimulatedNanites(180)}
+                      className="px-3 py-2 border border-cyan-700 bg-cyan-950 text-cyan-300 text-xs hover:bg-cyan-500 hover:text-black cursor-pointer"
+                    >
+                      +180 TN AUFFÜLLEN
+                    </button>
+                  )}
                   <button
                     onClick={handleOverclock}
                     className="flex-1 sm:flex-initial px-4 py-2.5 bg-amber-950/70 border border-amber-500 text-amber-300 hover:bg-amber-500 hover:text-black font-bold text-xs tracking-wider transition-all cursor-pointer shadow-[0_0_12px_rgba(245,158,11,0.2)]"
@@ -921,6 +1046,12 @@ export const InteractiveTutorialSimulator: React.FC<InteractiveTutorialSimulator
                   className="py-3 px-4 border border-cyan-600 bg-cyan-950 text-cyan-200 font-bold text-xs hover:bg-cyan-500 hover:text-black transition-colors cursor-pointer"
                 >
                   [R] NACHLADEN (-1 AP)
+                </button>
+                <button
+                  onClick={handleEndCombatTurn}
+                  className="py-3 px-4 border border-cyan-500 bg-cyan-950/60 text-cyan-300 font-bold text-xs hover:bg-cyan-500 hover:text-black transition-colors cursor-pointer"
+                >
+                  [E] ZUG BEENDEN (6 AP)
                 </button>
                 <button
                   onClick={handleResetCombat}
@@ -1135,6 +1266,15 @@ export const InteractiveTutorialSimulator: React.FC<InteractiveTutorialSimulator
                     Kausalitäts-Brücke: {pastSwitchActive ? 'SYNCHRONISIERT' : 'BLOCKIERT'}
                   </div>
                 </div>
+              </div>
+
+              <div className="flex justify-center pt-2">
+                <button
+                  onClick={handleResetCausality}
+                  className="py-2.5 px-5 border border-cyan-800 bg-cyan-950/40 text-cyan-300 text-xs font-bold hover:bg-cyan-500 hover:text-black transition-colors cursor-pointer"
+                >
+                  KAUSALITÄTS-EXPERIMENT ZURÜCKSETZEN
+                </button>
               </div>
             </div>
           )}
