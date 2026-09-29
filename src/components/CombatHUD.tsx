@@ -165,11 +165,20 @@ export const CombatHUD: React.FC<CombatHUDProps> = ({
 
   const audio = ProceduralAudioEngine.getInstance();
   const enemyAudio = EnemyAudioEngine.getInstance();
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const showToast = (msg: string) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setNotification(msg);
-    setTimeout(() => setNotification(null), 3000);
+    toastTimerRef.current = setTimeout(() => setNotification(null), 3000);
   };
+
+  // Cleanup toast timer on unmount
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    };
+  }, []);
 
   const playerEntity = useMemo(
     () => entities.find((e) => e.isPlayer && !e.isDrone) || entities[0],
@@ -419,8 +428,16 @@ export const CombatHUD: React.FC<CombatHUDProps> = ({
         );
 
         if (result.hit) {
-          const remainingHp = Math.max(0, targetEnemy.hp - result.damage);
-          const newShield = Math.max(0, targetEnemy.shield - result.damage);
+          // Drain shield first, overflow into HP
+          let remainingShield = targetEnemy.shield;
+          let remainingHp = targetEnemy.hp;
+          if (remainingShield >= result.damage) {
+            remainingShield -= result.damage;
+          } else {
+            const hpDmg = result.damage - remainingShield;
+            remainingShield = 0;
+            remainingHp = Math.max(0, remainingHp - hpDmg);
+          }
 
           setEntities((prev) =>
             prev.map((e) =>
@@ -428,7 +445,7 @@ export const CombatHUD: React.FC<CombatHUDProps> = ({
                 ? {
                     ...e,
                     hp: remainingHp,
-                    shield: newShield,
+                    shield: remainingShield,
                   }
                 : e
             )
@@ -501,19 +518,22 @@ export const CombatHUD: React.FC<CombatHUDProps> = ({
             ]);
             showToast(`ZIEL VERNICHTET (+${loot.nanites} TN)`);
 
-            // Check if all enemies are defeated
-            const remainingEnemies = entities.filter(
-              (e) => !e.isPlayer && e.id !== targetEnemy.id && e.hp > 0
-            );
-            if (remainingEnemies.length === 0) {
-              setIsSectorCleared(true);
-              enemyAudio.playVictoryFanfare();
-              (window as unknown as { terminalMusicEngine?: { setMusicState: (st: string) => void } }).terminalMusicEngine?.setMusicState('VICTORY');
-              setCombatLogs((prev) => [
-                '>> [SEKTOR GESICHERT]: Alle Feind-Signaturen eliminiert! Schleusen-Tor aktiv.',
-                ...prev,
-              ]);
-            }
+            // Check if all enemies are defeated using the live entity state
+            setEntities((currentEntities) => {
+              const remainingEnemies = currentEntities.filter(
+                (e) => !e.isPlayer && e.id !== targetEnemy.id && e.hp > 0
+              );
+              if (remainingEnemies.length === 0) {
+                setIsSectorCleared(true);
+                enemyAudio.playVictoryFanfare();
+                (window as unknown as { terminalMusicEngine?: { setMusicState: (st: string) => void } }).terminalMusicEngine?.setMusicState('VICTORY');
+                setCombatLogs((prev) => [
+                  '>> [SEKTOR GESICHERT]: Alle Feind-Signaturen eliminiert! Schleusen-Tor aktiv.',
+                  ...prev,
+                ]);
+              }
+              return currentEntities;
+            });
           }
         } else {
           spawnDamageParticle(targetEnemy.x, targetEnemy.y, 'FEHLSCHUSS', '#64748b');
@@ -745,17 +765,19 @@ export const CombatHUD: React.FC<CombatHUDProps> = ({
         ]);
       }
 
-      // 3. Zeit-Echo spawnen (Boss Phase 2)
+      // 3. Zeit-Echo spawnen (Boss Phase 2) — guard against duplicates via functional update
       if (result.spawnEcho) {
-        const echoExists = entities.some((e) => e.id === 'nilus-echo');
-        if (!echoExists) {
+        const echoX = Math.max(0, enemy.x - 2);
+        const echoY = enemy.y;
+        setEntities((prev) => {
+          if (prev.some((e) => e.id === 'nilus-echo')) return prev;
           const echoClone: ICombatEntity = {
             id: 'nilus-echo',
             name: 'NILUS-ECHO (KLON)',
             isPlayer: false,
             archetype: 'NILUS_CLONE',
-            x: Math.max(0, enemy.x - 2),
-            y: enemy.y,
+            x: echoX,
+            y: echoY,
             hp: 60,
             maxHp: 60,
             shield: 20,
@@ -764,9 +786,9 @@ export const CombatHUD: React.FC<CombatHUDProps> = ({
             damage: 20,
             color: '#a855f7',
           };
-          setEntities((prev) => [...prev, echoClone]);
-          spawnDamageParticle(echoClone.x, echoClone.y, 'BIFURKATION!', '#a855f7');
-        }
+          spawnDamageParticle(echoX, echoY, 'BIFURKATION!', '#a855f7');
+          return [...prev, echoClone];
+        });
       }
 
       // 4. Logbuch Eintrag

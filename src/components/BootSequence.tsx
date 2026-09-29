@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, useTransition } from 'react';
 import { BootPhase, IBootTelemetry } from '../types/boot';
 import { ProceduralAudioEngine } from '../services/audioEngine';
 import { AttractCanvas } from './AttractCanvas';
+import { TutorialModal } from './TutorialModal';
 
 interface BootSequenceProps {
   onBootComplete: () => void;
@@ -9,6 +10,7 @@ interface BootSequenceProps {
 
 export const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) => {
   const [phase, setPhase] = useState<BootPhase>('HARDWARE_PROBE');
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
   const [, startTransition] = useTransition();
 
   // Telemetry state
@@ -106,21 +108,8 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) =>
     }, 2200);
   }, [phase, isAudioMuted]);
 
-  // Global Keyboard / Pointer Gesture listener for Phase 2
-  useEffect(() => {
-    if (phase !== 'AWAITING_USER_GESTURE') return;
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Tab') return;
-      handleUserUnlock();
-    };
-
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [phase, handleUserUnlock]);
-
   // Transition from Attract to Home Screen (Phase 04 -> Phase 05 -> Home)
-  const handleInitializeTerminal = () => {
+  const handleInitializeTerminal = useCallback(() => {
     if (phase !== 'ATTRACT_ACTIVE') return;
 
     const audio = ProceduralAudioEngine.getInstance();
@@ -143,7 +132,46 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) =>
         onBootComplete();
       });
     }, 450);
-  };
+  }, [phase, onBootComplete]);
+
+  // Global Keyboard listener for Gestures, Enter/Space and [T] Tutorial
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (isTutorialOpen) {
+        // Tutorial modal handles its own Escape and arrow keys
+        return;
+      }
+
+      // Hotkey [T] opens Operative Manual / Tutorial anytime
+      if (e.key.toLowerCase() === 't') {
+        e.preventDefault();
+        const audio = ProceduralAudioEngine.getInstance();
+        audio.playSelectClick();
+        setIsTutorialOpen(true);
+        return;
+      }
+
+      if (e.key === 'Tab') return;
+
+      if (phase === 'AWAITING_USER_GESTURE') {
+        handleUserUnlock();
+      } else if (phase === 'PHOSPHOR_IGNITION') {
+        // Fast-forward to Attract on Enter or Space
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          setPhase('ATTRACT_ACTIVE');
+        }
+      } else if (phase === 'ATTRACT_ACTIVE') {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleInitializeTerminal();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [phase, isTutorialOpen, handleUserUnlock, handleInitializeTerminal]);
 
   const handleToggleMute = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -157,9 +185,15 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) =>
 
   return (
     <div
-      onClick={phase === 'AWAITING_USER_GESTURE' ? handleUserUnlock : undefined}
+      onClick={
+        phase === 'AWAITING_USER_GESTURE'
+          ? handleUserUnlock
+          : phase === 'ATTRACT_ACTIVE'
+          ? handleInitializeTerminal
+          : undefined
+      }
       className={`relative w-screen h-screen bg-[#070a0e] text-[#d8e2dc] font-mono overflow-hidden select-none flex flex-col justify-between ${
-        phase === 'AWAITING_USER_GESTURE' ? 'cursor-pointer' : ''
+        phase === 'AWAITING_USER_GESTURE' || phase === 'ATTRACT_ACTIVE' ? 'cursor-pointer' : ''
       }`}
     >
       {/* Diegetischer CRT Phosphor Flash */}
@@ -204,11 +238,23 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) =>
           <span className="hidden xl:inline text-cyan-200">STORAGE: {telemetry.localStorageAvailable ? 'OK' : 'VOLATILE'}</span>
         </div>
 
-        {/* Accessibility & Audio Controls */}
+        {/* Accessibility, Tutorial & Audio Controls */}
         <div className="flex items-center gap-3 text-[10px]">
           <button
+            onClick={(e) => {
+              e.stopPropagation();
+              const audio = ProceduralAudioEngine.getInstance();
+              audio.playSelectClick();
+              setIsTutorialOpen(true);
+            }}
+            className="px-2 py-0.5 border border-[#00FFAA]/80 bg-[#00FFAA]/10 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-black font-bold transition-colors cursor-pointer flex items-center gap-1 shadow-[0_0_8px_rgba(0,255,170,0.3)] animate-pulse"
+            title="Operative Manual / Handbuch öffnen [Taste T]"
+          >
+            <span>[T] TUTORIAL</span>
+          </button>
+          <button
             onClick={handleToggleMute}
-            className="px-2 py-0.5 border border-cyan-800/80 bg-cyan-950/40 hover:bg-cyan-500 hover:text-black transition-colors"
+            className="px-2 py-0.5 border border-cyan-800/80 bg-cyan-950/40 hover:bg-cyan-500 hover:text-black transition-colors cursor-pointer"
             title="Audio Stummschaltung"
           >
             {isAudioMuted ? '[ AUDIO: AUS ]' : '[ AUDIO: AN ]'}
@@ -218,7 +264,7 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) =>
               e.stopPropagation();
               setDisableFlicker(!disableFlicker);
             }}
-            className="hidden sm:inline-block px-2 py-0.5 border border-cyan-800/80 bg-cyan-950/40 hover:bg-cyan-500 hover:text-black transition-colors"
+            className="hidden sm:inline-block px-2 py-0.5 border border-cyan-800/80 bg-cyan-950/40 hover:bg-cyan-500 hover:text-black transition-colors cursor-pointer"
           >
             {disableFlicker ? '[ FLACKERN: AUS ]' : '[!] FLACKERN DEAKTIVIEREN'}
           </button>
@@ -269,7 +315,10 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) =>
                 Der Browser erfordert eine physische Benutzer-Geste zur Entriegelung der prozeduralen Web Audio Synthesizer-Engine.
               </p>
               <button
-                onClick={handleUserUnlock}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleUserUnlock();
+                }}
                 className="w-full py-4 bg-[#00FFAA]/10 border border-[#00FFAA] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-black font-bold tracking-[0.25em] transition-all duration-150 shadow-[0_0_20px_rgba(0,255,170,0.3)] hover:shadow-[0_0_35px_rgba(0,255,170,0.7)] text-sm sm:text-base cursor-pointer"
               >
                 [ &gt; ] SYSTEM BEREIT // KLICKEN ZUR INITIALISIERUNG
@@ -312,8 +361,8 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) =>
             </div>
 
             {/* Overlaid Attract HUD Controls */}
-            <div className="relative z-20 flex flex-col items-center text-center space-y-6 px-4 max-w-xl pointer-events-auto">
-              <div className="space-y-2 bg-[#070a0e]/80 p-4 border border-cyan-700/60 backdrop-blur-xs">
+            <div className="relative z-20 flex flex-col items-center text-center space-y-5 px-4 max-w-xl pointer-events-auto">
+              <div className="space-y-2 bg-[#070a0e]/85 p-4 border border-cyan-700/60 backdrop-blur-xs">
                 <div className="text-xs sm:text-sm text-cyan-300 tracking-[0.35em] font-bold">
                   ORBITAL-STATION STRATUM-09
                 </div>
@@ -328,20 +377,38 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) =>
                 </div>
               </div>
 
-              {/* Call-to-Action (CTA) Button */}
-              <button
-                onClick={handleInitializeTerminal}
-                className="group relative px-8 py-4 bg-cyan-950/70 border border-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-150 ease-out shadow-[0_0_20px_rgba(0,255,170,0.3)] hover:shadow-[0_0_35px_rgba(0,255,170,0.7)] cursor-pointer text-sm sm:text-base tracking-[0.25em] font-bold text-center"
-              >
-                <span className="flex items-center gap-2">
-                  <span>[ &gt; ]</span>
-                  <span>SYSTEM INITIALISIEREN</span>
-                  <span className="text-xs font-semibold opacity-90 text-cyan-200 group-hover:text-black">(ENTER)</span>
-                </span>
-              </button>
+              {/* Call-to-Action (CTA) Buttons: System Initialisieren & Operative Manual */}
+              <div className="flex flex-col sm:flex-row gap-3 items-center justify-center w-full">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleInitializeTerminal();
+                  }}
+                  className="group relative flex-1 w-full py-4 px-6 bg-cyan-950/80 border border-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-150 ease-out shadow-[0_0_20px_rgba(0,255,170,0.3)] hover:shadow-[0_0_35px_rgba(0,255,170,0.7)] cursor-pointer text-sm sm:text-base tracking-[0.2em] font-bold text-center"
+                >
+                  <span className="flex items-center justify-center gap-2">
+                    <span>[ &gt; ]</span>
+                    <span>INITIALISIEREN</span>
+                    <span className="text-xs font-semibold opacity-90 text-cyan-200 group-hover:text-black">(ENTER)</span>
+                  </span>
+                </button>
 
-              <div className="text-[10px] text-cyan-200 tracking-widest bg-[#070a0e]/90 px-3 py-1 border border-cyan-800 font-medium">
-                DRÜCKE [ENTER] ODER KLICKE ZUM STARTEN DES TAKTIK-DECKS
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const audio = ProceduralAudioEngine.getInstance();
+                    audio.playSelectClick();
+                    setIsTutorialOpen(true);
+                  }}
+                  className="flex-1 w-full py-4 px-6 bg-[#00FFAA]/15 border-2 border-[#00FFAA] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-black transition-all duration-150 shadow-[0_0_20px_rgba(0,255,170,0.3)] hover:shadow-[0_0_35px_rgba(0,255,170,0.7)] cursor-pointer text-xs sm:text-sm tracking-[0.15em] font-extrabold text-center flex items-center justify-center gap-2 animate-pulse"
+                >
+                  <span>[T]</span>
+                  <span>OPERATIVE MANUAL</span>
+                </button>
+              </div>
+
+              <div className="text-[10px] text-cyan-200 tracking-widest bg-[#070a0e]/95 px-4 py-1.5 border border-cyan-800 font-medium">
+                DRÜCKE [ENTER] ODER KLICKE BELIEBIG // TASTE [T] FÜR TUTORIAL
               </div>
             </div>
           </div>
@@ -372,6 +439,12 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) =>
           <span className="text-cyan-300 font-bold">AICR v9.4</span>
         </div>
       </footer>
+
+      {/* Operative Manual & Tutorial Walkthrough Modal */}
+      <TutorialModal
+        isOpen={isTutorialOpen}
+        onClose={() => setIsTutorialOpen(false)}
+      />
     </div>
   );
 };

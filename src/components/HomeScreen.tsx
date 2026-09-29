@@ -15,6 +15,7 @@ interface HomeScreenProps {
   onOpenEndgame?: () => void;
   onOpenQaModal?: () => void;
   onOpenTelemetry?: () => void;
+  onOpenTutorial?: () => void;
   onStartDeployment?: (sectorId: number) => void;
 }
 
@@ -28,6 +29,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenEndgame,
   onOpenQaModal,
   onOpenTelemetry,
+  onOpenTutorial,
   onStartDeployment,
 }) => {
   const { player, updatePlayer, loadCloudProfile, resetSave, exportSave } = useGameStorage();
@@ -133,18 +135,23 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     [audio, onOpenSettings, onOpenEconomy, onOpenEndgame]
   );
 
-  // Keyboard Navigation: [1-7], [B], [N], [T], Arrow Up/Down, Enter/Space, M
+  // Keyboard Navigation: [1-7], [T], [B], [N], Arrow Up/Down, Enter/Space, M
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // If modal is active, let Escape close it
+      // If tutorial modal is active, let it handle its own keys & Escape
       if (isTutorialOpen) {
-        if (e.key === 'Escape') {
-          setIsTutorialOpen(false);
-          audio.playUiClick();
-        }
         return;
       }
 
+      // Hotkey [T] or [t] opens Operative Manual / Tutorial anytime
+      if (e.key.toLowerCase() === 't') {
+        e.preventDefault();
+        audio.playSelectClick();
+        setIsTutorialOpen(true);
+        return;
+      }
+
+      // If modal is active, let Escape close it
       if (isAuthModalOpen) {
         if (e.key === 'Escape') {
           setIsAuthModalOpen(false);
@@ -157,6 +164,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         if (e.key === 'Escape') {
           setActiveModal('NONE');
           audio.playUiClick();
+        } else if (activeModal === 'DEPLOYMENT' && e.key === 'Enter') {
+          // Allow pressing Enter in Deployment modal to launch drop-pod!
+          e.preventDefault();
+          audio.playSelectClick();
+          setActiveModal('NONE');
+          if (onStartDeployment) onStartDeployment(selectedSector.id);
+          else showToast('EINSATZ INITIALISIERT');
         }
         return;
       }
@@ -168,10 +182,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       else if (e.key === '5') handleExecuteCommand(5);
       else if (e.key === '6' || e.key.toLowerCase() === 'b') handleExecuteCommand(6);
       else if (e.key === '7' || e.key.toLowerCase() === 'n') handleExecuteCommand(7);
-      else if (e.key.toLowerCase() === 't') {
-        audio.playSelectClick();
-        setIsTutorialOpen(true);
-      }
       else if (e.key === 'ArrowUp') {
         e.preventDefault();
         setFocusedIndex((prev) => {
@@ -198,7 +208,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeModal, focusedIndex, handleExecuteCommand, audio]);
+  }, [activeModal, focusedIndex, handleExecuteCommand, audio, isTutorialOpen, isAuthModalOpen, onStartDeployment, selectedSector.id]);
 
   const menuItems = [
     {
@@ -312,6 +322,19 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <span className="font-bold text-cyan-200">{player.rigIntegrity}%</span>
           </div>
 
+          {/* Operative Manual & Tutorial Header Button */}
+          <button
+            onClick={() => {
+              audio.playSelectClick();
+              setIsTutorialOpen(true);
+            }}
+            className="px-2.5 py-1 bg-[#00FFAA]/15 border-2 border-[#00FFAA] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-black font-extrabold transition-all cursor-pointer text-[10px] sm:text-xs tracking-wider flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,255,170,0.35)] animate-pulse"
+            title="Operative Manual & Taktik-Handbuch öffnen (Taste T)"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00FFAA] shadow-[0_0_6px_#00FFAA]" />
+            <span>[T] TUTORIAL</span>
+          </button>
+
           {/* Cloud Sync / Neural Login Status Button */}
           <button
             onClick={() => {
@@ -360,18 +383,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               <span>[QA-AUDIT]</span>
             </button>
           )}
-
-          {/* Prominent Tutorial / Operative Manual Button */}
-          <button
-            onClick={() => {
-              audio.playSelectClick();
-              setIsTutorialOpen(true);
-            }}
-            title="Taktisches Handbuch & Tutorial öffnen (Taste T)"
-            className="px-3 py-1 bg-cyan-950/80 border-2 border-[#00FFAA] text-[#00FFAA] font-extrabold hover:bg-[#00FFAA] hover:text-black transition-all cursor-pointer text-[10px] tracking-wider flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,255,170,0.35)] animate-pulse"
-          >
-            <span>[T] OPERATIVE MANUAL // VOLLSTÄNDIGES TUTORIAL</span>
-          </button>
         </div>
       </header>
 
@@ -446,23 +457,35 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 HAUPT-BEFEHLS-DECK
               </span>
               <span className="text-[10px] text-cyan-300 font-mono font-medium">
-                TASTEN [1-5] ODER PFEILE
+                TASTEN [1-7], [T] ODER PFEILE
               </span>
             </div>
 
-            {/* Quick Tutorial Callout Banner */}
+            {/* Prominent Operative Manual / Tutorial Banner */}
             <button
               onClick={() => {
                 audio.playSelectClick();
                 setIsTutorialOpen(true);
               }}
-              className="w-full mb-3 p-2.5 bg-[#00FFAA]/10 border-2 border-[#00FFAA]/70 hover:bg-[#00FFAA] hover:text-black text-[#00FFAA] transition-all font-mono font-bold text-xs tracking-wider flex items-center justify-between cursor-pointer shadow-[0_0_15px_rgba(0,255,170,0.25)]"
+              className="w-full mb-3 p-3 bg-gradient-to-r from-cyan-950/80 to-emerald-950/60 border-2 border-[#00FFAA] hover:border-white hover:from-cyan-900/90 hover:to-emerald-900/70 transition-all group flex items-center justify-between shadow-[0_0_20px_rgba(0,255,170,0.3)] cursor-pointer text-left font-mono relative overflow-hidden"
+              title="Operative Manual / Vollständiges Tutorial öffnen [Taste T]"
             >
-              <span className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#00FFAA] animate-ping" />
-                <span>[T] OPERATIVE MANUAL // VOLLSTÄNDIGES TUTORIAL</span>
+              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#00FFAA] shadow-[0_0_8px_#00FFAA]" />
+              <div className="pl-1 truncate pr-2">
+                <div className="text-[10px] text-[#00FFAA] font-extrabold tracking-widest flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#00FFAA] animate-ping" />
+                  [T] OPERATIVES HANDBUCH // VOLLSTÄNDIGES TUTORIAL
+                </div>
+                <div className="text-xs sm:text-sm font-black text-white group-hover:text-[#00FFAA] tracking-wider mt-0.5 truncate">
+                  ALLE SPIELMECHANIKEN, HOTKEYS &amp; TAKTIK-KAPITEL
+                </div>
+                <div className="text-[10px] text-slate-300 truncate mt-0.5 font-medium">
+                  Grid-Gefecht (6 AP), 160ms Chrono-Parade, 5 Waffensockel, Feind-Intents &amp; Börse
+                </div>
+              </div>
+              <span className="text-[10px] font-extrabold px-2.5 py-1.5 border border-[#00FFAA] bg-[#00FFAA] text-black shrink-0 tracking-widest group-hover:bg-white transition-colors shadow-[0_0_10px_#00FFAA]">
+                ÖFFNEN [T] &gt;
               </span>
-              <span className="text-[10px] uppercase font-extrabold underline">[ÖFFNEN] &gt;</span>
             </button>
 
             {/* Menu Tiles */}
@@ -775,19 +798,25 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
 
         <div className="flex items-center gap-3 text-cyan-200 font-medium">
-          <span className="hidden sm:inline font-mono">INPUT: [1-5] / TASTATUR / MAUS</span>
+          <span className="hidden sm:inline font-mono">INPUT: [1-7] / [T] / TASTATUR / MAUS</span>
           <button
             onClick={() => {
               const muted = audio.toggleMute();
               setIsMuted(muted);
               showToast(muted ? 'AUDIO STUMM' : 'AUDIO AKTIV');
             }}
-            className="px-2 py-0.5 border border-cyan-700 bg-cyan-950/60 text-cyan-200 hover:bg-cyan-500 hover:text-black transition-colors font-bold"
+            className="px-2 py-0.5 border border-cyan-700 bg-cyan-950/60 text-cyan-200 hover:bg-cyan-500 hover:text-black transition-colors font-bold cursor-pointer"
           >
             {isMuted ? '[M: STUMM]' : '[M: AUDIO AN]'}
           </button>
         </div>
       </footer>
+
+      {/* Operative Manual & Tutorial Walkthrough Modal */}
+      <TutorialModal
+        isOpen={isTutorialOpen}
+        onClose={() => setIsTutorialOpen(false)}
+      />
     </div>
   );
 };

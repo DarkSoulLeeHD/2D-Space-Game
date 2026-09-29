@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { useGameStorage } from './services/storageService';
 import { BootSequence } from './components/BootSequence';
 import { HomeScreen } from './components/HomeScreen';
 import { SettingsModal } from './components/SettingsModal';
@@ -34,6 +35,7 @@ export type AppView =
   | 'ENDGAME';
 
 export default function App() {
+  const { player } = useGameStorage();
   const [currentView, setCurrentView] = useState<AppView>('BOOT');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isTelemetryOpen, setIsTelemetryOpen] = useState(false);
@@ -160,8 +162,7 @@ export default function App() {
           onBackToDeck={() => {
             setCurrentView('HOME');
           }}
-          onLaunchMission={(params) => {
-            console.log('Mission launched:', params);
+          onLaunchMission={(_params) => {
             setCurrentView('COMBAT');
           }}
         />
@@ -172,7 +173,7 @@ export default function App() {
           sectorName={
             SECTOR_NODES.find((s) => s.id === selectedSectorId)?.name || 'SEKTOR 04: REAKTOR-BRUCH'
           }
-          threatLevel={2}
+          threatLevel={SECTOR_NODES.find((s) => s.id === selectedSectorId)?.threatLevel ?? 2}
           onExitCombat={() => {
             setCurrentView('NARRATIVE');
           }}
@@ -200,7 +201,7 @@ export default function App() {
 
       {currentView === 'ECONOMY' && (
         <EconomyExchange
-          sectorThreatLevel={2}
+          sectorThreatLevel={SECTOR_NODES.find((s) => s.id === selectedSectorId)?.threatLevel ?? 2}
           onBackToDeck={() => {
             setCurrentView('HOME');
           }}
@@ -209,7 +210,7 @@ export default function App() {
 
       {currentView === 'ENDGAME' && (
         <EndgameTerminal
-          playerLevel={20}
+          playerLevel={player.level ?? 20}
           onBackToDeck={() => {
             setCurrentView('HOME');
           }}
