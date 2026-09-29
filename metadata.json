@@ -1,0 +1,6 @@
+{
+  "name": "Chrono-Stratum: Protocol Null",
+  "description": "Hard Sci-Fi Terminal Roguelike, Tactical Grid Simulator & Procedural Audio Space Station Survival",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
